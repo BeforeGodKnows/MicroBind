@@ -105,7 +105,7 @@ def build_repairs(project: Project, report: dict, outdir: Path):
                         text, candidates[0], site["arguments"].index(term_text(obj))
                     )
                     new, strategy = next(iter(checked)), "bind_checked_object"
-                    reason = "将跨服务实参绑定到已有授权覆盖的路径对象；本接口约定以路径 ID 为准。"
+                    reason = "将跨服务调用的实参改为已通过授权检查的路径参数；该接口以路径 ID 确定目标对象。"
         elif (
             missing[0] == "untrusted_subject"
             and config.get("owner_guard")
@@ -119,7 +119,7 @@ def build_repairs(project: Project, report: dict, outdir: Path):
             if len(matches) == 1:
                 start, end = argument_span(text, matches[0], 1)
                 new, strategy = " " + config["current_user"], "trusted_subject"
-                reason = "复用当前服务的可信身份来源，替换请求者可控的用户 ID。"
+                reason = "使用当前服务的可信身份方法，替换请求中可自行指定的用户 ID。"
         elif missing[0] in ("missing_owner", "missing_role"):
             role = missing[0] == "missing_role"
             guard = config.get("role_guard" if role else "owner_guard")
@@ -132,7 +132,7 @@ def build_repairs(project: Project, report: dict, outdir: Path):
                         f"{guard}();" if role else f"{guard}({direct}, {config['current_user']});"
                     )
                     new, strategy = "\n        " + statement, "reuse_existing_guard"
-                    reason = "入口处已有所需对象和可信身份；复用当前类可调用的鉴权方法，使检查先于敏感效果。"
+                    reason = "入口中可以取得目标对象和可信身份，复用当前类的授权方法，在数据操作前完成检查。"
         elif missing[0] == "missing_tenant":
             sql = op["sql"]
             candidates = [k for k, v in op["parameters"].items() if v == "trusted:tenant"]
@@ -159,14 +159,14 @@ def build_repairs(project: Project, report: dict, outdir: Path):
                     new = raw + join + finding["required"]["tenant"] + " = #{" + candidates[0] + "}"
                     strategy, reason = (
                         "sql_scope",
-                        "可信租户已传递到 Mapper；在查询处补充约束，不改变跨服务接口。",
+                        "Mapper 已收到可信租户参数，在 SQL 中补充租户条件，跨服务接口保持原样。",
                     )
         if start is None:
             patches.append(
                 {
                     "finding_id": finding["id"],
                     "status": "manual_review",
-                    "reason": "当前模板缺少明确的修改位置或可用变量。",
+                    "reason": "当前修复模板无法确定修改位置，或缺少所需变量。",
                 }
             )
             continue

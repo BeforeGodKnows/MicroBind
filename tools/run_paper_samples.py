@@ -53,7 +53,7 @@ def run(output):
                 ),
                 "no_false_clean_verdict": report["assessment"]["status"] == "no_operation_evidence",
             }
-            outcome = "通信组件通过；样例没有 SQL 授权真值，不能计算漏洞精度。"
+            outcome = "Feign 连接和参数绑定检查通过；样例未提供 SQL 授权问题的预期标注。"
         elif name == "neo-role":
             checks = {
                 "python_gap_visible": any(
@@ -64,7 +64,9 @@ def run(output):
                 ),
                 "no_false_clean_verdict": report["assessment"]["status"] == "no_operation_evidence",
             }
-            outcome = "当前不支持完整路径；未检出该跨语言角色修改问题，已明确报告覆盖缺口。"
+            outcome = (
+                "尚不支持完整的 Java/Python 调用路径，未检出样例中的角色修改问题；详情见覆盖缺口。"
+            )
         else:
             brand = [r for r in report["results"] if r["endpoint"] == ["GET", "/wx/brand/detail"]]
             address = [r for r in report["results"] if r["endpoint"][1].startswith("/wx/address/")]
@@ -76,7 +78,7 @@ def run(output):
                 "partial_coverage_visible": report["assessment"]["status"] == "partial",
                 "html_written_for_unknown_table": (output / name / "report.html").is_file(),
             }
-            outcome = "原始源码子集接入成功；1 条公开读取有静态结论，7 条操作待确认。不是 PCFinder 原论文精度复现。"
+            outcome = "已分析该源码子集；1 条公开读取满足配置要求，7 条操作待确认。这组结果不用于复现 PCFinder 论文准确率。"
         rows.append(
             {
                 "sample": name,
@@ -104,11 +106,11 @@ def run(output):
     }
     dump(output / "summary.json", doc)
     lines = [
-        "# 上游样例实测记录",
+        "# 上游样例分析结果",
         "",
-        "本命令不调用大模型，不执行被分析项目。通过的是兼容性与缺口提示断言，不是漏洞检出率。",
+        "本次运行仅执行静态分析，检查框架适配结果及不支持路径的提示。模型复核关闭，不统计漏洞检出率。",
         "",
-        "| 样例 | 入口 | HTTP 连接 | 数据操作 | 已有覆盖 | 待确认 | 结论 |",
+        "| 样例 | 入口 | HTTP 连接 | 数据操作 | 已满足授权要求 | 待确认 | 结论 |",
         "| --- | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for row in rows:
@@ -120,7 +122,7 @@ def run(output):
         "",
         "各目录包含 analysis.json、HTML、Markdown、SARIF 与源码上下文。来源提交和逐文件 SHA256 位于 samples/*/provenance.json。",
         "",
-        "NEO 离线原工具演示需另运行 tools/run_neo_offline.py；它使用作者预置的单服务流，不调用 CodeQL 或 LLM。",
+        "NEO 自带的离线示例可通过 tools/run_neo_offline.py 单独运行，使用上游预置的服务内数据流，无需 CodeQL 或模型。",
     ]
     (output / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return doc

@@ -1,9 +1,17 @@
-# 原始上游源码样例
+# 上游源码样例
 
-三个目录用于静态分析与通信适配测试。所有 `upstream/` 文件来自 `provenance.json` 中的固定提交，未修改；新增的 `project.yml` 负责项目接入。NEO 文件遵守其 Apache-2.0 许可，litemall 文件遵守 MIT 许可，许可证随各自样例保存。
+本目录提供三组静态分析样例，用于测试接口连接、参数绑定及当前不支持的语法和调用。`upstream/` 中的文件来自 `provenance.json` 记录的固定提交，保留上游原文；`project.yml` 是 MicroBind 的接入配置。
 
-- `neo-http`：原始 HTTP Connector Java 文件；5 条预期 Feign 连接。
-- `neo-role`：原始 Java/Python 跨服务角色修改示例；当前 MicroBind 不支持完整路径，专门检验覆盖不足提示。
-- `litemall`：PCFinder 项目列表中的项目，选择地址/品牌接口及依赖的原始源码子集；不是论文原始真值集，也不是可单独部署的完整商城。
+- `neo-http`：NEO 的 HTTP Connector Java 文件，包含 5 条预期 Feign 连接。
+- `neo-role`：NEO 的 Java/Python 跨服务角色修改示例，用于检查跨语言分析缺口是否得到报告。
+- `litemall`：地址、品牌接口及相关源码子集，用于测试 MyBatis 适配。该项目出现在 PCFinder 的项目列表中；本目录使用自行固定的版本，不包含论文中的预期结果标注，也不是完整商城。
 
-在仓库根目录运行 `python tools/run_paper_samples.py --out out/paper-samples`。脚本先核对逐文件 SHA256，再用当前分析器重新执行。详细范围、版本和结果见 `docs/PAPER_SAMPLE_TESTS.md`。
+在仓库根目录运行：
+
+```bash
+python tools/run_paper_samples.py --out out/paper-samples
+```
+
+脚本先核对逐文件 SHA-256，再执行分析。版本、预期结果和复现命令见 [样例说明](../docs/PAPER_SAMPLE_TESTS.md)。
+
+NEO 文件使用 Apache-2.0 许可，litemall 文件使用 MIT 许可，各样例目录均保留许可证。

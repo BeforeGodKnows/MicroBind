@@ -1,0 +1,58 @@
+{
+  "project": "MicroBind",
+  "version": "0.3.4",
+  "checked_on": "2026-10-26",
+  "record_type": "open_source_publication_checks",
+  "environment": {
+    "os": "Windows",
+    "python": "3.14.4",
+    "node": "24.15.0",
+    "pytest": "8.4.2",
+    "ruff": "0.14.10",
+    "playwright": "1.64.1"
+  },
+  "unit_tests": {
+    "total": 48,
+    "passed": 44,
+    "existing_windows_failures": 4,
+    "same_failures_reproduced_before_edits": true
+  },
+  "python_style": {
+    "lint_passed": true,
+    "format_passed": true
+  },
+  "frontend": {
+    "clean_npm_ci_passed": true,
+    "typecheck_build_passed": true,
+    "dependency_versions_unchanged": true,
+    "large_bundle_warning": true
+  },
+  "browser": {
+    "selected_tests_passed": 3,
+    "additional_pages_inspected": 4,
+    "page_errors": 0,
+    "runner": "temporary Windows adapter using the real API, queue store and pipeline",
+    "linux_worker_revalidated": false,
+    "source_upload_revalidated": false,
+    "java_runtime_revalidated": false
+  },
+  "static_demo": {
+    "operations": 18,
+    "before_suspected": 8,
+    "after_covered": 18,
+    "patch_count": 8,
+    "modified_files": 2
+  },
+  "upstream_samples": {
+    "assertions_passed": true,
+    "original_files_verified": 22
+  },
+  "scope": {
+    "python_structure_unchanged": true,
+    "upstream_sources_unchanged": true,
+    "user_nginx_and_packaging_fix_preserved": true,
+    "linux_full_regression_pending": true,
+    "docker_runtime_pending": true,
+    "real_model_not_executed": true
+  }
+}

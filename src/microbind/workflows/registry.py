@@ -35,7 +35,7 @@ def registry():
         for s in [
             Skill(
                 "source.analyze",
-                "源码授权分析",
+                "分析源码",
                 (),
                 ("project", "result"),
                 ("read_source", "write_report"),
@@ -43,7 +43,7 @@ def registry():
             ),
             Skill(
                 "model.review",
-                "模型证据复核",
+                "模型复核",
                 ("project", "result"),
                 ("smart_done",),
                 ("read_source", "model_network"),
@@ -51,7 +51,7 @@ def registry():
             ),
             Skill(
                 "repair.propose",
-                "补丁生成与副本复查",
+                "生成补丁并复查",
                 ("project", "result"),
                 ("fixed_source",),
                 ("write_project_copy",),
@@ -59,7 +59,7 @@ def registry():
             ),
             Skill(
                 "lab.verify",
-                "自建靶场运行验证",
+                "运行靶场验证",
                 ("result", "fixed_source"),
                 ("runtime_done",),
                 ("execute_trusted_lab",),
@@ -67,7 +67,7 @@ def registry():
             ),
             Skill(
                 "report.export",
-                "报告与证据打包",
+                "导出报告和证据",
                 ("result",),
                 ("bundle",),
                 ("write_report",),

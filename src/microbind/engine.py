@@ -499,11 +499,11 @@ class Analyzer:
             else "partial"
             if self.p.issues or gaps
             else "analyzed",
-            "message": "没有形成可判定的数据操作证据，不能据此认定项目安全。"
+            "message": "未识别到可判定的数据操作，当前结果不足以判断授权是否完整。"
             if not results
-            else "存在未覆盖代码，请结合覆盖缺口审查。"
+            else "部分代码尚无法完整分析，请查看覆盖范围并核对相关路径。"
             if self.p.issues or gaps
-            else "已完成所配置范围内的静态判定。",
+            else "已完成项目配置范围内的静态分析。",
             "entries_with_operation_result": len(evaluated_entries),
             "entries_without_operation_result": len(entry_coverage) - len(evaluated_entries),
             "entries_with_gaps": len(incomplete),

@@ -65,9 +65,9 @@ def diagnose(path):
         if method not in names:
             warnings.append("可信身份方法未在已加载源码中找到：" + method)
     if not project.entries():
-        warnings.append("没有识别到对外业务入口；检查 services.path、exposed 和路由注解")
+        warnings.append("未识别到对外接口，请检查 services.path、exposed 和路由注解")
     if not data.get("policies"):
-        warnings.append("未配置业务授权策略；DDL 推断不能替代业务需求确认")
+        warnings.append("尚未配置业务授权规则，请核对 DDL 推断的归属列和租户列是否符合业务要求")
     return {
         "valid": True,
         "manifest": str(Path(path).resolve()),

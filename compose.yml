@@ -22,7 +22,7 @@ x-model: &model
 services:
   api:
     <<: *common
-    image: ${API_IMAGE:-microbind-api:0.3.2}
+    image: ${API_IMAGE:-microbind-api:0.3.4}
     build:
       context: .
       dockerfile: deploy/Dockerfile.backend
@@ -47,7 +47,7 @@ services:
       start_period: 20s
   worker:
     <<: *common
-    image: ${API_IMAGE:-microbind-api:0.3.2}
+    image: ${API_IMAGE:-microbind-api:0.3.4}
     command: [python, -m, microbind.server.worker]
     environment: *model
     volumes: [data:/data]
@@ -59,7 +59,7 @@ services:
       api: {condition: service_healthy}
   frontend:
     <<: *common
-    image: ${WEB_IMAGE:-microbind-web:0.3.2}
+    image: ${WEB_IMAGE:-microbind-web:0.3.4}
     build:
       context: .
       dockerfile: deploy/Dockerfile.frontend
@@ -77,12 +77,12 @@ services:
   verifier:
     <<: *common
     profiles: [verify]
-    image: ${VERIFY_IMAGE:-microbind-verify:0.3.2}
+    image: ${VERIFY_IMAGE:-microbind-verify:0.3.4}
     build:
       context: .
       dockerfile: deploy/Dockerfile.verifier
       args:
-        BACKEND_IMAGE: ${API_IMAGE:-microbind-api:0.3.2}
+        BACKEND_IMAGE: ${API_IMAGE:-microbind-api:0.3.4}
         MAVEN_IMAGE: ${MAVEN_IMAGE:-maven:3.9.9-eclipse-temurin-17}
         MAVEN_REPOSITORY: ${MAVEN_REPOSITORY:-https://repo.maven.apache.org/maven2}
     environment: *model

@@ -1,0 +1,356 @@
+{
+  "project": "MicroBind",
+  "version": "0.3.3",
+  "validated_on": "2026-10-26",
+  "record_type": "summary_of_local_execution",
+  "environment": {
+    "os": "Linux",
+    "python": "3.12.14",
+    "node": "24.22.1",
+    "java": "17.0.20",
+    "maven": "3.9.9",
+    "playwright": "1.64.1",
+    "chromium": "141.0.7390.37"
+  },
+  "unit_tests": {
+    "tests": 48,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "python_style": {
+    "ruff_version": "0.14.10",
+    "lint_passed": true,
+    "format_passed": true
+  },
+  "frontend": {
+    "clean_npm_ci_passed": true,
+    "typecheck_build_passed": true,
+    "large_bundle_warning": true,
+    "locked_dependencies_unchanged": true
+  },
+  "browser": {
+    "expected": 5,
+    "unexpected": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "runtime": {
+    "path": "browser -> API -> queue -> skills -> Java services",
+    "before": {
+      "scenarios": 18,
+      "passed_scenarios": 18,
+      "unauthorized_effects_observed": 8,
+      "legitimate_requests_passed": 18,
+      "boundary_checks_passed": 4
+    },
+    "after": {
+      "scenarios": 18,
+      "passed_scenarios": 18,
+      "unauthorized_effects_observed": 0,
+      "legitimate_requests_passed": 18,
+      "boundary_checks_passed": 4
+    },
+    "model": "disabled"
+  },
+  "static_demo": {
+    "before": {
+      "java_files": 21,
+      "parsed_java_files": 21,
+      "sql_statements": 10,
+      "entries": 19,
+      "rpc_edges": 7,
+      "paths": 20,
+      "operations": 18,
+      "covered": 10,
+      "suspected": 8
+    },
+    "after": {
+      "java_files": 21,
+      "parsed_java_files": 21,
+      "sql_statements": 10,
+      "entries": 19,
+      "rpc_edges": 7,
+      "paths": 19,
+      "operations": 18,
+      "covered": 18
+    },
+    "patch_count": 8,
+    "modified_files": [
+      "data/src/main/resources/mapper/OrderMapper.xml",
+      "orders/src/main/java/demo/orders/OrderController.java"
+    ]
+  },
+  "samples": [
+    {
+      "name": "neo-http",
+      "commit": "65ec4e35a1db67159a9d89a59e3e28d30f665690",
+      "original_files_verified": 2,
+      "summary": {
+        "java_files": 3,
+        "parsed_java_files": 3,
+        "sql_statements": 0,
+        "entries": 7,
+        "rpc_edges": 5,
+        "paths": 0,
+        "operations": 0
+      },
+      "assessment": "no_operation_evidence",
+      "checks": {
+        "five_expected_feign_edges": true,
+        "wire_bindings_complete": true,
+        "no_false_clean_verdict": true
+      }
+    },
+    {
+      "name": "neo-role",
+      "commit": "65ec4e35a1db67159a9d89a59e3e28d30f665690",
+      "original_files_verified": 4,
+      "summary": {
+        "java_files": 1,
+        "parsed_java_files": 1,
+        "sql_statements": 0,
+        "entries": 1,
+        "rpc_edges": 0,
+        "paths": 0,
+        "operations": 0
+      },
+      "assessment": "no_operation_evidence",
+      "checks": {
+        "python_gap_visible": true,
+        "rest_template_gap_visible": true,
+        "no_false_clean_verdict": true
+      }
+    },
+    {
+      "name": "litemall",
+      "commit": "a1ef964a718b7277925b19ea26afe78ea3a1d325",
+      "original_files_verified": 16,
+      "summary": {
+        "java_files": 13,
+        "parsed_java_files": 13,
+        "sql_statements": 36,
+        "entries": 6,
+        "rpc_edges": 0,
+        "paths": 101,
+        "operations": 8,
+        "needs_review": 7,
+        "covered": 1
+      },
+      "assessment": "partial",
+      "checks": {
+        "six_original_endpoints": true,
+        "public_brand_detail_covered": true,
+        "address_not_certified": true,
+        "partial_coverage_visible": true,
+        "html_written_for_unknown_table": true
+      }
+    }
+  ],
+  "deployment": {
+    "compose_configurations": [
+      {
+        "mode": "static",
+        "passed": true,
+        "services": [
+          "api",
+          "frontend",
+          "worker"
+        ]
+      },
+      {
+        "mode": "verify",
+        "passed": true,
+        "services": [
+          "api",
+          "frontend",
+          "verifier",
+          "worker"
+        ]
+      },
+      {
+        "mode": "verify-lab",
+        "passed": true,
+        "services": [
+          "api",
+          "frontend",
+          "lab-data",
+          "lab-gateway",
+          "lab-orders",
+          "verifier",
+          "worker"
+        ]
+      }
+    ],
+    "shell_syntax_checked": 6,
+    "docker_engine_executed": false,
+    "dockerfile_local_copy_inputs_in_release": true
+  },
+  "naming": {
+    "release_source_old_name_matches": 0,
+    "entry_points_verified": {
+      "microbind": "microbind.cli:main",
+      "microbind-mcp": "microbind.mcp_server:main",
+      "microbind-worker": "microbind.server.worker:main"
+    },
+    "upstream_files_unchanged": 22,
+    "ui_brand_visually_checked": true
+  },
+  "not_executed": [
+    "Docker image build and container runtime",
+    "Mainland China network connectivity",
+    "Remote GitHub Actions",
+    "Live model calls or accuracy gains",
+    "Complete paper benchmarks",
+    "IDA integration",
+    "Existing deployment data migration"
+  ],
+  "tested_source_digest": {
+    "algorithm": "sha256",
+    "serialization": "UTF-8 JSON, sorted keys, compact separators",
+    "sha256": "04fd56b6fd72c30a405540522add51cdbbde07040f9536c8b9990112b8bd9aed",
+    "files": {
+      ".env.example": "9b8383b0543955d66ccd0c118a22eae8194e6cf0acd76f8e534c01c9ffac83b9",
+      ".github/ISSUE_TEMPLATE/bug_report.md": "1872419cdf588091fea0b493131cbf09666b5ac450ba743a9f8a4e3dbfbc28ee",
+      ".github/ISSUE_TEMPLATE/feature_request.md": "6d012f73d7faebcc38bd973f478509f76fef59612dba3909f8a9526e376dc290",
+      ".github/pull_request_template.md": "9b76053178780a6a0ec4c2e057c8328191311a77940a4a60c0b8c99c263dd521",
+      ".github/workflows/ci.yml": "40ab5b716ef129351e5089ca82570c5c9aad5096c323a4817433a15f2417f5fc",
+      ".github/workflows/containers.yml": "2099c194f7d68a692503b3c78287d7fe3263d2c70306d4e64b020906afba4fe6",
+      ".github/workflows/frontend.yml": "f22802a1f09ba2eb0d8dd0f389e6ced3d2b42f61faccf27e3f3d87b83ee30741",
+      "compose.lab.yml": "177837f737ddcbdee8198f320dece37f38afbf3f49dc9edaec34265ba7b640e1",
+      "compose.yml": "60c19a28f691d7f2f6bde1ce107673160e53d31db7762f563419a09ff0680d6d",
+      "config/project.example.yml": "3da251180652579f504878ba5e0475391b698ef21e74333343b4104cf13be3e2",
+      "demo/.dockerignore": "4f4a1c8f7f2c0b2164e33509f9545dc914a1d4ce1dbb58984687fdeac100672d",
+      "demo/Dockerfile": "d783fd8ff92f6bdb82f1f0af05c9be0dec46897f625c219780f5114598f9713f",
+      "demo/common/pom.xml": "e0372c63c976616c62c634bd3e716ced863103a97803d7c9b79ec18b3e1e981b",
+      "demo/common/src/main/java/demo/common/CancelRequest.java": "56327e95ecd1b2dd0fe11173f782558566d7b8c6b79cab0f5c02932ee2e53783",
+      "demo/common/src/main/java/demo/common/Order.java": "fda630a4c442ec9d8dbd8e9186a6bff3ff10211e2c53185556043020e58d7402",
+      "demo/common/src/main/java/demo/common/Product.java": "e141e60dd84ce4be304e02c05a2fc7e7f4a6c9c3850b88202fa3d311cb38b0d8",
+      "demo/common/src/main/java/demo/common/UserRow.java": "8f7053aa7eeb156970bc456b19efee674971e122d6879b78457164fa338440c5",
+      "demo/data/pom.xml": "890ea842db009d31fd4e13afe789f2bd04d4ab0f8857e60bb22d49ca11fd117d",
+      "demo/data/src/main/java/demo/data/Application.java": "1c5d1cd99991b045ec9e05c0cda3d986ef564a8b0bff3303cfdad200298ee648",
+      "demo/data/src/main/java/demo/data/DataController.java": "445034b170c2f7ac9829a9543863cf09e724699bd420da41902d81e43e4629c8",
+      "demo/data/src/main/java/demo/data/Health.java": "1145a9289d77bb210d59d86284ef3d8d53580eda338bfb1b1eafb57cbafe7482",
+      "demo/data/src/main/java/demo/data/InternalFilter.java": "6d080b3189d8c39d521721aae6a3208c94e62575380c32e4cf1723724c61997a",
+      "demo/data/src/main/java/demo/data/OrderMapper.java": "aff87f39bce09edadee0c0f8518513d2861053413744a862f7ea85e5930db7e3",
+      "demo/data/src/main/resources/application.yml": "037702c74553151a73e5905391f6444259eaa544b57bdfffbc4046d3b51f45fd",
+      "demo/data/src/main/resources/data.sql": "dd6cbf76e5934e2ff393f5564b4cbb663ac3459030e79f1cad0b79b7bd858cdc",
+      "demo/data/src/main/resources/mapper/OrderMapper.xml": "d5528217317eb1cdf9302b437fd17b92a0ceed22e2010f98a329171b2c301cf2",
+      "demo/data/src/main/resources/schema.sql": "dda003d90688dd3933142af62779fcbfa7a103ad94cd958ca123f996e8c591e5",
+      "demo/expected.json": "ba027a2de89587415f5c02c034786cf3dbd661cd0de1f2f12c4750d6d9a98083",
+      "demo/gateway/pom.xml": "7ccaea7cd0f4132ce0fe60431300b63b623168fde7f34e883fa46bf8a8a4083b",
+      "demo/gateway/src/main/java/demo/gateway/Application.java": "ffffe7f332f424836e65403ce8c1f61c286ba0b3338fe11755e08bb109800966",
+      "demo/gateway/src/main/java/demo/gateway/GatewayController.java": "f5121975e330eee47bf407fb9e7f0beff169ecff3edc29d8de4f3f86d9b22c32",
+      "demo/gateway/src/main/resources/application.yml": "7c4752b79a21bef86ee9c9362cc264951934808eb3d5f8e266a84dcd0a19fe49",
+      "demo/orders/pom.xml": "3424a063d028ae0167d0eada809031409e87b04bdd5e4363495bf921fa020fbd",
+      "demo/orders/src/main/java/demo/orders/Application.java": "9d5cd968d887cf3b5f2b1186b54427a595e6b12035d83f530926b676fb36829f",
+      "demo/orders/src/main/java/demo/orders/AuthContext.java": "1bb9712502e783761fbf674014f34e5dd1c4a095666c106454ad30c8584f97e4",
+      "demo/orders/src/main/java/demo/orders/AuthorizationService.java": "f7f34fe6f2b7699f5f64eabad14a0e6569faaab02abf9dd56f78628cb5e45cba",
+      "demo/orders/src/main/java/demo/orders/DataClient.java": "fd950c43ce273968903065733fcd36c97ccf6554368dff6cd80aef3f8f9d5df2",
+      "demo/orders/src/main/java/demo/orders/ErrorHandler.java": "9631dc4f63ead9f09cbeb125bacd7afda5400d57712585a2b6f7ba16b0276c70",
+      "demo/orders/src/main/java/demo/orders/FeignConfig.java": "a52bccbd8f2befd90e2a66d64c5c15947996c9f15131534eb451d347877ecfe5",
+      "demo/orders/src/main/java/demo/orders/Health.java": "8d4b47cea1b00e543d4adc624af86b037064b0930cb99957a2b93220833b6dc9",
+      "demo/orders/src/main/java/demo/orders/IdentityFilter.java": "1ca49a23207903a6c347c63a929b8ecd25365882a46b727d8485eb0d5a4c8619",
+      "demo/orders/src/main/java/demo/orders/OrderController.java": "d2c08c21c6173954728196239360eb8b9b47046e48686edbd4cab1aa0454fa61",
+      "demo/orders/src/main/java/demo/orders/SecurityConfig.java": "3ffb25d4b8a014420e138f1c3fe6df5ec5868ba80bcdc0542a214b5e96290005",
+      "demo/orders/src/main/resources/application.yml": "57c1df05aad189fbc96af2fb3e17a2f7e3af118dbf254692a347fafadd5c1fef",
+      "demo/pom.xml": "1b55933a4cf4476099c496b87953adf7811ca4e25cad96725641abd55600b766",
+      "demo/project.yml": "526d65a97752cd8931ef7c31a820222771078a1b258a32db476b5f2d49aa51dc",
+      "deploy/Dockerfile.backend": "e398df2990751caee1d17ca09835004ece12b41aaefd90a9cbd18ed9ca2efef1",
+      "deploy/Dockerfile.frontend": "e83d6fa64b0224b0d12190a24ca2b98f899b714abd3d2eb50df45fda399141e7",
+      "deploy/Dockerfile.lab": "3189a5c62f1ee75477d2a57a137fff059f37d621b3fa0274e8cd294baebc9964",
+      "deploy/Dockerfile.verifier": "13eb71abdbccaafc0098036da6d7cd9bb4a468e00c0f9854f28474e78eecaf68",
+      "deploy/maven-offline.xml": "4b938f75eb5a8c1f79c5689e4a96387c4b4dea63beddf5065adf4950e89e2d62",
+      "deploy/maven-settings.xml": "8e351860bba3fcc340c2f7a2e1eda1925fefddff66bca9fbdc91acfb2e0d3042",
+      "deploy/nginx.conf": "9e1cf1c7fa84fc5d93dcea605896b2849bd66f322593e710c4bf4b12fcf0c976",
+      "deploy/requirements.lock": "fa1a15b5d66b7950db1553cd28e124154bb7086b2abde2d4feb3dd18b3da1854",
+      "deploy/verify-entrypoint.sh": "4b77ff151f3b2037c63be5bb56fe544331fcc578da1e38806f684cc7e7b7e059",
+      "frontend/index.html": "0e43569d244dcba0eabe60e78fa970a9bbb7d4e013b15f5877e99d981f1be3ec",
+      "frontend/package-lock.json": "d7fb6d5ff7fb259d6f35ef4f2f0b617a0df4d2d019cfbc6bd672a4d531aa17d6",
+      "frontend/package.json": "b7b7758be3b1f30a738edd4ebc8f266a3399a05c23049a3dca7a9b9cffc480a8",
+      "frontend/playwright.config.ts": "5ff97fd1657b406523c218bb8beec9e2432584ec66cee3ad3c9d6c3bd5e8bc3b",
+      "frontend/src/api.ts": "151a37b86eda78d7c2ce17ae92b3740a6220f508dec392125b6de4bbafa96557",
+      "frontend/src/main.tsx": "25421fe71764f3c44b5fc75e7528ea78fb27cbc1f7c1097285f10aba9a288df6",
+      "frontend/src/modules/Extensions.tsx": "3df7facc96ede55ea413f171c0f393f0b605b9a7c1099115355e8cde0a1bbfd0",
+      "frontend/src/style.css": "efe5569fe6941400c0f93b5d5b4707858f134c4f06c6d05d88983f798c289dfc",
+      "frontend/src/vite-env.d.ts": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+      "frontend/tests/workflow.spec.ts": "0e914bb508655a5d661e2d1f81315f06228fd52ed5b38d36e7fef0d2388c1657",
+      "frontend/tsconfig.json": "d72f81f758b6805e75eb20ee05b8049c86991c3b6b28817325009841a60b7244",
+      "frontend/vite.config.ts": "f0d37bc5c0d2b7b78dfb489fa80676e8848d81fc3b1f888c24f5836625a2669b",
+      "pyproject.toml": "7e682a6944dec7661b9e5f775ce6b54c6cf91d0bcc26e7c5b3569ed193faa859",
+      "samples/README.md": "fb4dabaac97aff3d5018ccde1dc67bd46773550fbf97e27741e8256a1cddf58f",
+      "samples/litemall/project.yml": "84cffa91c26803f5e58bf6279fba352df14c6deca1b8380e35a42b9bc8c1efbf",
+      "samples/litemall/provenance.json": "8ce7462c12a8588c979ecf6aa9bfadabfab6d3b669d845407736291ef478a108",
+      "samples/litemall/upstream/LICENSE": "20f75e61fd07d21f9a655937213ce46814b0e40f6ddb93a5f69938736c71dfa0",
+      "samples/litemall/upstream/litemall-core/src/main/java/org/linlinjava/litemall/core/util/ResponseUtil.java": "92eb04af8b1a2b6cf45b44b944528b33969ee79a638a1c93b49929429f3ed6e4",
+      "samples/litemall/upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/dao/LitemallAddressMapper.java": "0b494e7fbf71cf8ea44be11192c69e77d8d7311769700bf6cb8c83e889b71dcb",
+      "samples/litemall/upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/dao/LitemallBrandMapper.java": "61d16be8bcbeb2956e85071fc18cb17410ce71924f819e78140dba8f96f9b64d",
+      "samples/litemall/upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/domain/LitemallAddress.java": "c3893789b1317b4db0b2ebcd88981452a2d8bc84bb33dfb5708ecf21693367ec",
+      "samples/litemall/upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/domain/LitemallAddressExample.java": "5f62004c7e9be8f7dfad9dc3ebbbf8e5f26626f36ed6b8240ccf8bf6c48c080d",
+      "samples/litemall/upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/domain/LitemallBrand.java": "576904a841612b91e642af7f439c52e2f80bcc06e5fbc70eb11b5961afd09582",
+      "samples/litemall/upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/domain/LitemallBrandExample.java": "19a53f9c61178672c39a587bffd5dd3856f23cbcb9a50e7cc9117fdcad481c74",
+      "samples/litemall/upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/service/LitemallAddressService.java": "88a009af4e8ee7b34756a8232a05532170acb7d0f2b4e4c4ed08302aff0f3099",
+      "samples/litemall/upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/service/LitemallBrandService.java": "e147bb9760e279634600c21d5aa362b5fa38c05295ed76fc6b6fa34f50a049fc",
+      "samples/litemall/upstream/litemall-db/src/main/resources/org/linlinjava/litemall/db/dao/LitemallAddressMapper.xml": "825be7070bbbf7d99ea7e3ac3c8838a73982b026a117975f56dcb741bd589cdf",
+      "samples/litemall/upstream/litemall-db/src/main/resources/org/linlinjava/litemall/db/dao/LitemallBrandMapper.xml": "c1a1cfa32891fcb3e8a3e704ab96efe687033a5ec183ce35900ab74659c32a42",
+      "samples/litemall/upstream/litemall-wx-api/src/main/java/org/linlinjava/litemall/wx/annotation/LoginUser.java": "39317bd1833a5330146fc16adb5d8ca2693b1823c6bcf177dd413d7453dc4258",
+      "samples/litemall/upstream/litemall-wx-api/src/main/java/org/linlinjava/litemall/wx/annotation/support/LoginUserHandlerMethodArgumentResolver.java": "2ecb30cd0d4e3a8cf35912c1fc88759fed34a41d1515f4e2978565e8ba8ca1d1",
+      "samples/litemall/upstream/litemall-wx-api/src/main/java/org/linlinjava/litemall/wx/web/WxAddressController.java": "417d7b8480b4029e02a3a31993407f15a602fbc36d342e498546319f6170f1a0",
+      "samples/litemall/upstream/litemall-wx-api/src/main/java/org/linlinjava/litemall/wx/web/WxBrandController.java": "8226018f8bd724cae04ef46ec6b2fdd1c374e5b0e2798e47ed61fc0f2d039b7e",
+      "samples/neo-http/project.yml": "17fa90f0a1d47f15c50045c5e1986658e9560258a7edf0c59f719e69c437409c",
+      "samples/neo-http/provenance.json": "9c21b0ede4413adce44c76ccbf30fac0c3e45a5b91f7fd42df8dfaff645f4508",
+      "samples/neo-http/upstream/LICENSE": "d474358a4b83ba0ac12a8586e065210744c92b77c516c3fe4025324447cbd64d",
+      "samples/neo-http/upstream/codebases/java/src/main/java/com/example/test/TestHTTPConnector.java": "1dcd9a4cf47e9709254ca2fc20dd945faf029d66e6ad41f9b97c7e4d92e8df00",
+      "samples/neo-role/project.yml": "5d0cd0b5093281541426c1d2cb22fb35405108fb75ecfc121a6ceb7f86ed36fa",
+      "samples/neo-role/provenance.json": "184fada58b11365137a40c799e55bc423d4682ea7d6af2d250a9f9af732da6bd",
+      "samples/neo-role/upstream/LICENSE": "d474358a4b83ba0ac12a8586e065210744c92b77c516c3fe4025324447cbd64d",
+      "samples/neo-role/upstream/examples/role-switch-demo/neo.services.yaml": "4baf10152cf56afa23f355a822d67dabbe664132286ef0d7ee17efa1e63464ba",
+      "samples/neo-role/upstream/examples/role-switch-demo/user-mgmt/app/main.py": "bf662257ee0a0be7efaa2974417cda38e626c3ba8cdbc2d2275bb607b2b5a18e",
+      "samples/neo-role/upstream/examples/role-switch-demo/user-profile/src/ProfileController.java": "6a8eccce6b1e0fc3bac0ce314837c1d527d5b39fcf7b2fd107c49091696a0077",
+      "scripts/container-smoke.sh": "28ae413ca32fe119ee51313a167479917ab732c47806c0563d189d4e106bd12d",
+      "scripts/deploy.sh": "966af9d72aec58464b90e3285ed735e1fb30f3d1ff00a8883beffa0a5a0b9054",
+      "scripts/export-offline.sh": "d2dd67f12bb9feb3924725a9aa165730b78c93c3a4e71f855dac435277ff9dff",
+      "scripts/import-offline.sh": "53ddd66cc4c85550f18bda9d122825b37987d26a3f495beaf260a96db7671301",
+      "scripts/init.sh": "332b9613d536c885fb9e2b7f432aacf87937b8d9c4f25246d883c4a7c93bbf12",
+      "src/microbind/__init__.py": "40f3d7f866cc3f43d1239f2b8ba852f0839cfb86be1ae006cceacb0094a02516",
+      "src/microbind/__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+      "src/microbind/cli.py": "b11dd638e5c5a121d1e4e9ed37be1cd15b1c448215601ccdd823ca9728074dff",
+      "src/microbind/engine.py": "2b36a4186665b623e05edcda3432719166d3460b663a5ae3378c6a0e7cf9d2f7",
+      "src/microbind/evidence_tools.py": "e645113eb3a490c93335f0a858b35258be1e5b86ca3ef434be10c744ccecd343",
+      "src/microbind/frontend.py": "6456c836b27495eb0467ea6cb9d5114f310d77b9593adddb575a3e4c8d0ab6d9",
+      "src/microbind/lab.py": "e0400025c0249486816fed6f529042c78b7a623cefb75e61bfadcd2456096517",
+      "src/microbind/llm.py": "aaf44921156f290963d909bd93b35221663d977c821928e1950f2de9fd58724f",
+      "src/microbind/mcp_server.py": "1e5ad2bea100f3e728819ce852a8cffacb1f7f3a38ee87d7982423dd36e23cde",
+      "src/microbind/model.py": "e5f35f19fc80f6c446d33c8a39669c3c962e65530776a3fa89f71c1305d854b3",
+      "src/microbind/model_config.py": "c4473fa7cb0618e98d0f39ae403bba2956571c7554bbb7c00efb235f1425dc87",
+      "src/microbind/project_config.py": "4e5fb22739196f4a4fa2df4f60505bbb78d35c3aff72f1fe3a1e0704eb840a42",
+      "src/microbind/repair.py": "5f32b8085ba12df9371e90ef13763fa18df5618264186c36c47e4927cbff929b",
+      "src/microbind/report.py": "0b47a9e2833fee3dbbfd12e98adc1bb2d88e51c0a6f118146b3ba03f44e8c6af",
+      "src/microbind/server/__init__.py": "2b89c68dd41cbc58dd696944441605e02e552c7dc25368562f15900898a30fb7",
+      "src/microbind/server/app.py": "c6faec66b5cabdff83536177daf721e57de9fd9ed5c29ca9fe90562adff77ed4",
+      "src/microbind/server/config.py": "ca70c42565ea247d21522f8d5270cb3f0f2345599516e10b66d16f4d862dfda0",
+      "src/microbind/server/pipeline.py": "bf3b9dacdbe295248de7b1725c1894dcf08a9177d9364b75d0a408a1db56872c",
+      "src/microbind/server/sources.py": "e14598dfeca26afde56a633c996cd54910af5a5fef2e50500f8eb925c7b9e8ca",
+      "src/microbind/server/store.py": "b4804b7ac08d0a6f2c7697718d8f7400cabf309e64d0670ab45ac0fb1a44bd1b",
+      "src/microbind/server/worker.py": "ae078999dc2a82d9e75be6fa5d4572c7cea41e1eca2e9431d4f2bb0b6011f234",
+      "src/microbind/smart.py": "4af4f0d132e444183072117edc25ad7c0d2679ea6956c1b48ce2de31cbdb7a6d",
+      "src/microbind/workflows/__init__.py": "3d1247dd437c46a1a14c51aededad2e71af9d765ea4675b0089e3117432e5bcf",
+      "src/microbind/workflows/registry.py": "8b8555dad21da8335a3fde76d6f566c3d1a5e2ee869444d06d7563da980da6d3",
+      "src/microbind/workflows/steps.py": "d9c8eaba0dc3d3e758c44a1c13e5837b99c006af2b0da25805f892a91dc6ebd4",
+      "tests/test_analysis.py": "fb477eb20b756a0a0fa430b9b98d13321b282c7f031518e0fe4dba1d3e6482b4",
+      "tests/test_external_samples.py": "6395f8379eca0f42e5b30be28dc3bb25239605efd04cba041342a5b2ea4b0f18",
+      "tests/test_llm.py": "92c1774ecd63b6279b59b45c79655d52c1a01990e26de93be34441fe5274376a",
+      "tests/test_release.py": "a9ec63d50cf2444a3ead5d58d2f68cc88b113c0f3883b76800d13c908a4172dd",
+      "tests/test_server.py": "e979a4399943a90e1aaf7fb0f391cdc2859bb1f9ce9c33bf68e283252a311439",
+      "tests/test_smart.py": "f0ee111c828afb1fcde6eb20ba1eb12f0cff56a8245d5a0dd144ef6091eb7098",
+      "tools/evaluate_labels.py": "929905c13c73a36b672185216f1d5785307340876d511355c768114093249315",
+      "tools/fetch_upstreams.py": "5281db2e75d516906b21edc0446efe044923e2039a846c484c35c53682207d82",
+      "tools/package_release.py": "a3983d8d900ca02637366a6e8536b1da878e66e9961bab9c09d31072c8298bd4",
+      "tools/run_neo_offline.py": "6b932efa62168b088a8ef843b4aae3498226eb7652fae3616ceef118d76f5541",
+      "tools/run_paper_samples.py": "e62a3391c77a4bb2cef07c3d375f9ede2193fe42f0c19295c391c59e1f13be16",
+      "tools/run_runtime_smoke.py": "bc3a3726cbcdc79a35d3f1d7313f42f116832152de1686de98932b159ac1dd36",
+      "tools/run_web_smoke.py": "2ea5c4c45af933272ca9eaa1221e30a8836198a285fead0343e1c5d306b6132f",
+      "tools/verify_web_pipeline.py": "f0a6fe3063093e29b143cfd5270c113d6d31a8e8e133222c8b1ade99049e7822"
+    }
+  }
+}

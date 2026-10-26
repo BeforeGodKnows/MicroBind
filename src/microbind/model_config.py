@@ -9,4 +9,4 @@ def enabled():
 
 def require_enabled():
     if not enabled():
-        raise ValueError("模型功能已关闭；需要时设置 MICROBIND_LLM_ENABLED=1 并重建相关容器")
+        raise ValueError("模型功能已关闭；请设置 MICROBIND_LLM_ENABLED=1，并重新创建相关容器")

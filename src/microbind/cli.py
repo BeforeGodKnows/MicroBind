@@ -47,23 +47,23 @@ def scan(manifest, output, llm=False):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(prog="microbind", description="跨服务授权覆盖分析与修复 demo")
+    parser = argparse.ArgumentParser(prog="microbind", description="Java 微服务授权分析与修复")
     sub = parser.add_subparsers(dest="command", required=True)
-    p = sub.add_parser("check-config", help="检查具体配置文件、服务路径和身份方法名")
+    p = sub.add_parser("check-config", help="检查项目配置、服务路径和可信身份方法")
     p.add_argument("manifest", type=Path)
     p = sub.add_parser("scan", help="分析服务源码并输出报告")
     p.add_argument("manifest", type=Path)
     p.add_argument("--out", type=Path, default=Path("out/scan"))
     p.add_argument("--llm", action="store_true")
-    p.add_argument("--smart", action="store_true", help="启用有预算限制的源码工具复核")
+    p.add_argument("--smart", action="store_true", help="启用模型复核，并限制工具调用次数和耗时")
     p.add_argument("--fail-on-findings", action="store_true")
-    p = sub.add_parser("repair", help="生成补丁，可将补丁应用到新的工作副本")
+    p = sub.add_parser("repair", help="生成补丁，可应用到新的源码副本")
     p.add_argument("manifest", type=Path)
     p.add_argument("--out", type=Path, default=Path("out/repair"))
     p.add_argument("--apply-to", type=Path)
     for name, help_text in [
-        ("verify", "启动真实靶场并执行 HTTP/数据库断言"),
-        ("demo", "分析、修复、复测完整流水线"),
+        ("verify", "启动内置靶场，验证 HTTP 响应和数据库状态"),
+        ("demo", "运行内置项目的分析、修复和验证流程"),
     ]:
         p = sub.add_parser(name, help=help_text)
         p.add_argument("--project", type=Path, default=Path("demo"))

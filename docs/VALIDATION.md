@@ -1,28 +1,34 @@
 # 测试与验证
 
-v0.3.2，验证日期 2026-10-26。可移植摘要保存在 [validation-v0.3.2.json](validation-v0.3.2.json)，完整测试输出由下列命令写入本机 `out/`，不包含在源码包中。
+当前发布版本为 **v0.3.4**。项目以 Linux 为测试和部署环境；本次完成了文档、界面文案及发布文件检查，完整 Linux 回归将在服务器环境就绪后执行。
 
-## 已执行检查
+## v0.3.4 发布前检查
 
-| 检查 | 结果 | 范围 |
-| --- | --- | --- |
-| Python | 47 项通过 | 分析、修复、配置、API、技能、模型协议及发布包边界 |
-| Ruff | 检查与格式检查通过 | `src/`、`tests/`、`tools/` |
-| 前端 | 干净安装、TypeScript 检查和 Vite 构建通过 | 保留约 1.09 MB 主包的体积提示，后续可按路由拆分 |
-| 浏览器 | 5 项通过，0 跳过 | 真实 API/worker：提交、证据、下载、样例、上传、技能目录及 Java 运行验证 |
-| 内置靶场 | 越权效果 8 → 0；正常请求 18/18；边界 4/4 | 页面提交任务，经队列执行 Spring/Feign/MyBatis/H2，检查 HTTP 与数据库效果 |
-| 静态修复 | 8 个候选，修改 2 个文件；修复后 18 条 covered | 内置样例的副本复查 |
-| 上游样例 | 三组预期断言通过，22 个源文件/许可文件与原包一致 | NEO HTTP、NEO role、litemall 子集；含不支持路径提示 |
-| 部署配置 | 三组 Compose 配置解析、6 个 shell 脚本语法检查通过 | 静态、verify、verify + lab；没有启动 Docker 容器 |
-| 更名检查 | 发布源码与路径无旧项目名；三个新命令入口可用 | Python 包、前端、报告、MCP、部署配置与文档；前端锁定依赖未变化 |
+检查日期：2026-10-26。摘要见 [validation-v0.3.4.json](validation-v0.3.4.json)，本地输出保存在 `out/`。
 
-验证环境为 Linux、Python 3.12.14、Node 24.22.1、JDK 17.0.20、Maven 3.9.9、Playwright 1.64.1，浏览器使用 Chrome for Testing 141.0.7390.37。模型部署开关关闭；协议测试使用测试替身，没有调用真实模型。
+| 检查 | 结果 |
+| --- | --- |
+| Python | 44 项通过；4 项受现有 Windows 兼容限制，修改前后结果一致 |
+| Ruff | `src/`、`tests/`、`tools/` 的检查和格式检查通过 |
+| 前端 | 锁定依赖安装、TypeScript 检查和生产构建通过；主包约 1.09 MB，仍有体积提示 |
+| 浏览器 | 登录与任务下载、上游样例、技能目录 3 项通过；另外检查了示例、技能、设计和模型配置 4 个页面 |
+| 静态修复 | 内置靶场生成 8 个补丁、修改 2 个文件，副本复查中 18 条操作均为 `covered` |
+| 上游样例 | NEO HTTP、NEO role、litemall 三组断言通过；22 个上游文件的哈希一致 |
+| 源码与文档 | Python 代码结构、上游源码和前端依赖保持原样，文档本地链接通过检查 |
+| 发布文件 | 保留 Nginx 配置和 Docker 构建输入检查，版本标识统一为 0.3.4 |
 
-Docker 镜像构建/启动、大陆网络连通性、远程 GitHub Actions、真实模型增益、完整论文基准及 IDA 集成均未验证。原始样例的具体结论见 [样例说明](PAPER_SAMPLE_TESTS.md)。
+本地浏览器检查使用真实 API 和分析执行器，通过临时适配脚本运行；尚未重新验证完整 Linux worker、源码上传、Java 运行验证和 Docker 容器部署。真实模型调用及完整论文基准也未纳入本次检查。
+
+## 历史验证记录
+
+- [v0.3.3](validation-v0.3.3.json)：Linux 环境下的 48 项 Python 测试、5 项浏览器测试及 Java 靶场验证记录，包含 Docker 本地构建输入检查。
+- [v0.3.2](validation-v0.3.2.json)：项目更名后的验证记录。
+
+历史结果对应各自记录的源码和环境，新版本的完整回归另行记录。样例范围与结果说明见 [样例说明](PAPER_SAMPLE_TESTS.md)。
 
 ## 本地复现
 
-按 README 创建虚拟环境并安装依赖，然后执行：
+以下命令以 Linux 为例。按 README 创建虚拟环境并安装依赖，然后执行：
 
 ```bash
 ruff check src tests tools
@@ -40,7 +46,7 @@ npm --prefix frontend run build
 python tools/run_runtime_smoke.py --out out/runtime-smoke --maven mvn
 ```
 
-Maven 依赖首次需要下载。可用 `--maven-settings /path/to/settings.xml` 指定镜像或已准备的离线缓存。发布验证使用已预热的独立 Maven 缓存。
+Maven 依赖首次需要下载。可用 `--maven-settings /path/to/settings.xml` 指定镜像或已准备的离线缓存。离线运行前，请先准备独立的 Maven 依赖缓存。
 
 ## 浏览器交互
 
@@ -55,7 +61,7 @@ MICROBIND_E2E_VERIFY=1 MICROBIND_MAVEN=/path/to/maven/bin/mvn python tools/run_w
 
 脚本自动准备原始样例 ZIP，启动实际 API、worker 与 Vite，使用本机 8000 和 4173 端口，结束后关闭所启进程。普通模式执行 4 项并跳过 Java 流程；完整模式执行全部 5 项。结果写入 `out/validation/`，截图写入 `out/ui-inspection/`。可通过 `MICROBIND_CHROMIUM` 指定已有 Chromium，通过 `MICROBIND_MAVEN_SETTINGS` 指定 Maven 配置。
 
-浏览器依赖或下载不可用时应记为未执行，不以单纯前端构建替代交互测试。中文截图需本机具备中文字体。
+浏览器交互测试需要可用的 Chromium，生成中文截图还需安装中文字体。前端构建和浏览器交互分别记录检查结果。
 
 ## 容器与发布
 

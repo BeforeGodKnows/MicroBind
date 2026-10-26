@@ -31,9 +31,9 @@ def create_app(settings=None):
     store = Store(settings.data)
     if settings.samples:
         for id, name in [
-            ("neo-http", "NEO · 原始 HTTP 通信样例"),
+            ("neo-http", "NEO · HTTP 通信样例"),
             ("neo-role", "NEO · Java/Python 角色修改样例"),
-            ("litemall", "PCFinder 项目列表 · litemall 原始源码子集"),
+            ("litemall", "litemall · 地址与品牌接口"),
         ]:
             folder = settings.samples / id
             if (folder / "project.yml").is_file():
@@ -93,7 +93,7 @@ def create_app(settings=None):
                 while chunk := await file.read(1024 * 1024):
                     size += len(chunk)
                     if size > settings.max_upload:
-                        raise ValueError("ZIP 超过 50 MB")
+                        raise ValueError("ZIP 大小超过 50 MiB 上限")
                     temp.write(chunk)
                 temp.flush()
                 manifest = await run_in_threadpool(unpack, Path(temp.name), destination)
@@ -116,7 +116,7 @@ def create_app(settings=None):
         if request.kind == "verify" and (
             project["id"] != "demo" or not project["builtin"] or not settings.verify_enabled
         ):
-            raise HTTPException(400, "运行验证仅支持启用验证容器后的内置靶场")
+            raise HTTPException(400, "运行验证仅支持内置靶场，请先启用验证服务")
         if request.smart and not capabilities()["smart_configured"]:
             raise HTTPException(400, "请先在服务端配置模型地址和模型名")
         try:
@@ -155,14 +155,14 @@ def create_app(settings=None):
     def cancel(id: str):
         get_job(id)
         if not store.cancel_queued(id):
-            raise HTTPException(409, "仅能取消排队任务；运行任务由超时上限约束")
+            raise HTTPException(409, "只能取消排队中的任务；运行中的任务会在超时后停止")
         return {"cancelled": True}
 
     @app.delete("/api/jobs/{id}", dependencies=[Depends(auth)])
     def delete(id: str):
         get_job(id)
         if not store.delete(id):
-            raise HTTPException(409, "请先等待任务结束或取消排队任务")
+            raise HTTPException(409, "请等待任务结束，或先取消排队中的任务")
         shutil.rmtree(settings.data / "jobs" / id, ignore_errors=True)
         return {"deleted": True}
 

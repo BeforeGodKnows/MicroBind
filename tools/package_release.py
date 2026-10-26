@@ -55,6 +55,7 @@ EXCLUDED_DIRS = {
     "playwright-report",
 }
 SOURCE_SUFFIXES = {
+    ".conf",
     ".py",
     ".java",
     ".xml",

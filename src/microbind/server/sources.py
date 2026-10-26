@@ -27,7 +27,7 @@ def unpack(archive: Path, destination: Path):
     seen = set()
     with zipfile.ZipFile(archive) as z:
         if len(z.infolist()) > 5000:
-            raise ValueError("ZIP 最多 5000 个文件")
+            raise ValueError("ZIP 文件数超过 5000 个的上限")
         for item in z.infolist():
             p = PurePosixPath(item.filename)
             if (
@@ -37,11 +37,11 @@ def unpack(archive: Path, destination: Path):
                 or ":" in item.filename
                 or stat.S_ISLNK(item.external_attr >> 16)
             ):
-                raise ValueError("ZIP 含非法路径或软链接")
+                raise ValueError("ZIP 包含不允许的路径或符号链接")
             if item.is_dir():
                 continue
             if p in seen:
-                raise ValueError("ZIP 含重复文件")
+                raise ValueError("ZIP 包含重复文件")
             seen.add(p)
             if any(x.startswith(".") or x in {"target", "node_modules"} for x in p.parts):
                 continue
@@ -53,13 +53,13 @@ def unpack(archive: Path, destination: Path):
                 or total > 100 * 1024 * 1024
                 or item.file_size > max(item.compress_size, 1) * 200
             ):
-                raise ValueError("源码体积或压缩比例超过限制")
+                raise ValueError("解压后的源码大小或压缩比超过限制")
             target = destination.joinpath(*p.parts)
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(z.read(item))
     manifests = list(destination.rglob("project.yml"))
     if len(manifests) != 1:
-        raise ValueError("ZIP 必须含唯一 project.yml；格式参见内置示例")
+        raise ValueError("ZIP 中必须包含且只包含一份 project.yml，格式请参照内置示例")
     manifest = manifests[0]
     config = yaml.safe_load(manifest.read_text(encoding="utf-8"))
     if (
@@ -67,7 +67,7 @@ def unpack(archive: Path, destination: Path):
         or not isinstance(config.get("services"), list)
         or not 1 <= len(config["services"]) <= 20
     ):
-        raise ValueError("project.yml 需要 1–20 个 services")
+        raise ValueError("project.yml 的 services 必须包含 1–20 个服务")
     names = set()
     for service in config["services"]:
         if (
@@ -75,9 +75,9 @@ def unpack(archive: Path, destination: Path):
             or not isinstance(service.get("name"), str)
             or not isinstance(service.get("path"), str)
         ):
-            raise ValueError("service 必须提供 name 和 path")
+            raise ValueError("每个服务必须填写 name 和 path")
         if service["name"] in names:
-            raise ValueError("service 名称重复")
+            raise ValueError("服务名称不能重复")
         names.add(service["name"])
         folder = (manifest.parent / service["path"]).resolve()
         if (
@@ -85,9 +85,9 @@ def unpack(archive: Path, destination: Path):
             and manifest.parent not in folder.parents
             or not folder.is_dir()
         ):
-            raise ValueError("service path 必须在项目目录内且存在")
+            raise ValueError("服务路径必须指向项目目录内已存在的目录")
         if Path(service["path"]).is_absolute():
-            raise ValueError("service path 需要相对路径")
+            raise ValueError("服务 path 必须使用相对路径")
     from ..project_config import validate
 
     validate(manifest)

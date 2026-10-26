@@ -21,7 +21,7 @@ x-lab-args: &lab-args
 services:
   lab-data:
     <<: *lab
-    image: ${LAB_DATA_IMAGE:-microbind-lab-data:0.3.2}
+    image: ${LAB_DATA_IMAGE:-microbind-lab-data:0.3.4}
     build:
       context: .
       dockerfile: deploy/Dockerfile.lab
@@ -32,7 +32,7 @@ services:
       LAB_INTERNAL_KEY: ${LAB_INTERNAL_KEY:?Run scripts/init.sh first}
   lab-orders:
     <<: *lab
-    image: ${LAB_ORDERS_IMAGE:-microbind-lab-orders:0.3.2}
+    image: ${LAB_ORDERS_IMAGE:-microbind-lab-orders:0.3.4}
     build:
       context: .
       dockerfile: deploy/Dockerfile.lab
@@ -45,7 +45,7 @@ services:
     depends_on: [lab-data]
   lab-gateway:
     <<: *lab
-    image: ${LAB_GATEWAY_IMAGE:-microbind-lab-gateway:0.3.2}
+    image: ${LAB_GATEWAY_IMAGE:-microbind-lab-gateway:0.3.4}
     build:
       context: .
       dockerfile: deploy/Dockerfile.lab

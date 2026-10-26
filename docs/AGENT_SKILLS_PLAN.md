@@ -1,27 +1,37 @@
 # 技能接口与扩展
 
-技能是执行步骤，任务队列是调度入口。分析器不依赖 HTTP 或 SQLite，页面也不直接调用分析细节。该划分允许 CLI、工作台和后续规划器复用同一能力。
+MicroBind 将分析、复核、修复、验证和报告导出分别注册为技能，由任务执行器按顺序调用。分析器独立于 HTTP 和 SQLite，CLI 与工作台复用同一套处理逻辑。
 
 ## 当前接口
 
-`src/microbind/workflows/registry.py` 定义 `Skill`、`Context`、注册表、计划生成和执行器；`steps.py` 实现处理函数。`Skill` 声明 ID、版本、所需输入、产生的输出、能力和 handler。`Context` 保存源码与产物目录、项目属性、进度回调、共享结果和事件。
+`src/microbind/workflows/registry.py` 定义 `Skill`、`Context`、注册表和执行器，`steps.py` 实现具体处理函数。`Skill` 包含 ID、版本、输入、输出、操作能力和 handler；`Context` 保存源码目录、输出目录、项目属性、进度回调、共享结果及执行记录。
 
-| ID | 输入 | 输出 | 调用条件 |
+| ID | 输入 | 输出 | 执行条件 |
 | --- | --- | --- | --- |
-| `source.analyze` | 源码、项目配置 | project、result | 必选 |
-| `model.review` | project、result | smart_done、模型意见 | 部署允许且任务开启 smart |
-| `repair.propose` | project、result | fixed_source、补丁、复查 | 请求修复或验证 |
-| `lab.verify` | result、fixed_source | runtime_done、验证记录 | 仅启用 verifier 的内置 demo |
-| `report.export` | result | bundle、报告 | 必选 |
+| `source.analyze` | 源码、项目配置 | project、result | 每次执行 |
+| `model.review` | project、result | smart_done、模型意见 | 服务端启用模型，且任务开启 smart |
+| `repair.propose` | project、result | fixed_source、补丁、复查结果 | 请求修复或运行验证 |
+| `lab.verify` | result、fixed_source | runtime_done、验证记录 | 启用 verifier，且项目为内置 demo |
+| `report.export` | result | bundle、报告 | 每次执行 |
 
-`make_plan` 生成固定顺序；`run_skill` 检查依赖并记录状态。`GET /api/skills` 直接返回注册表，结果中的 `skill_events` 记录实际执行。`permissions` 目前是能力声明；模型开关、可信靶场检查和容器部署承担相应限制，尚无通用插件沙箱。
+`make_plan` 根据任务选项生成固定顺序，`run_skill` 检查依赖、调用 handler 并记录状态。`GET /api/skills` 返回注册表内容，任务结果中的 `skill_events` 保存实际执行记录。
 
-新增内置技能时，在 `steps.py` 或单独模块实现 handler，再在注册表声明依赖和输出，并为输入缺失、执行失败及正常结果补充测试。仅需要修改的分析适配逻辑，应留在分析器中，不必拆成独立技能。上传项目不能注册可执行代码。
+`permissions` 列出技能需要的操作能力。当前限制由模型开关、内置靶场检查和容器配置实现，尚未提供通用插件沙箱。
 
-## 模型和 MCP
+## 添加内置技能
 
-模型复核通过五个只读工具获取方法、SQL、路径和策略证据；MCP 服务将相同查询能力开放给外部客户端。工具协议解决调用方式，技能定义执行职责，两者不提供自主规划。
+1. 在 `steps.py` 或独立模块中实现 handler。
+2. 在注册表中声明输入、输出和所需能力。
+3. 补充输入缺失、执行失败和正常完成的测试。
 
-后续计划增加受信安装目录、声明文件、输入输出 schema、版本和预算校验。配置格式待执行器实现时一并确定，当前不支持从 `SKILL.md` 或 YAML 自动加载扩展。规划器应选择已注册技能，计划经校验后才交给执行器；运行记录需保留源码、配置和技能版本。
+框架解析和分析规则仍放在分析器中，仅在需要独立执行步骤时新增技能。上传项目不能注册或执行自定义技能代码。
 
-具体优先级和验收条件见 [路线图](ROADMAP.md)。
+## 模型与 MCP
+
+模型复核使用五个只读工具查询方法、SQL、路径和策略。MCP 服务将相同的证据查询工具提供给外部客户端。模型意见单独保存在结果中，不改写静态分析结论。
+
+## 扩展计划
+
+计划增加可信安装目录、技能声明文件、输入输出 schema，以及版本和执行上限校验。目前不支持从 `SKILL.md` 或 YAML 自动加载扩展。
+
+任务规划器将从已注册技能中选择步骤，计划通过依赖和执行上限校验后再运行。运行记录需要保留源码、配置和技能版本，便于复现。具体顺序见 [开发计划](ROADMAP.md)。

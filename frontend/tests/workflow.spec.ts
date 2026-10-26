@@ -33,9 +33,9 @@ test("login, submit real task, inspect evidence and download patch bundle", asyn
   const dl = page.waitForEvent("download");
   await page.getByRole("button", { name: "下载证据与补丁" }).click();
   expect((await dl).suggestedFilename()).toMatch(/microbind-.*\.zip/);
-  await page.getByRole("menuitem", { name: "技术依据与改进方向" }).click();
+  await page.getByRole("menuitem", { name: "设计与参考" }).click();
   await expect(page.getByText("NEO / MScan", { exact: true })).toBeVisible();
-  await page.getByRole("menuitem", { name: "部署与智能分析" }).click();
+  await page.getByRole("menuitem", { name: "模型与部署" }).click();
   await expect(page.getByText("只读工具", { exact: true })).toBeVisible();
   expect(errors).toEqual([]);
 });
@@ -54,7 +54,7 @@ test("original upstream sample runs via real queue and shows coverage limits", a
 }) => {
   await login(page);
   await expect(page.getByRole("switch", { name: "智能复核" })).toBeDisabled();
-  await page.getByRole("menuitem", { name: "上游样例与实测" }).click();
+  await page.getByRole("menuitem", { name: "示例项目" }).click();
   await page
     .getByRole("row")
     .filter({ hasText: "NEO · 跨语言角色修改" })
@@ -71,7 +71,7 @@ test("original upstream sample runs via real queue and shows coverage limits", a
     page.getByRole("button", { name: "下载证据与补丁" }),
   ).toBeVisible({ timeout: 45000 });
   await expect(
-    page.getByText("没有形成可判定的数据操作证据，不能据此认定项目安全。", {
+    page.getByText("未识别到可判定的数据操作，当前结果不足以判断授权是否完整。", {
       exact: true,
     }),
   ).toBeVisible();
@@ -117,7 +117,7 @@ test("upload original litemall subset, inspect true API result and download", as
     page.getByRole("button", { name: "下载证据与补丁" }),
   ).toBeVisible({ timeout: 45000 });
   await expect(
-    page.getByText("存在未覆盖代码，请结合覆盖缺口审查。", { exact: true }),
+    page.getByText("部分代码尚无法完整分析，请查看覆盖范围并核对相关路径。", { exact: true }),
   ).toBeVisible();
   const response = await page.request.get("/api/jobs/" + job.id + "/result", {
     headers: {
@@ -179,7 +179,7 @@ test("full UI runtime verification executes real Java services without model", a
   ).toBeVisible({ timeout: 220000 });
   await page.getByRole("tab", { name: "运行验证", exact: true }).click();
   await expect(
-    page.getByText("真实服务回归通过", { exact: true }),
+    page.getByText("靶场回归测试通过", { exact: true }),
   ).toBeVisible();
   const response = await page.request.get("/api/jobs/" + job.id + "/result", {
     headers: {

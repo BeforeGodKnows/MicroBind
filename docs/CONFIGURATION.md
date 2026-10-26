@@ -1,6 +1,6 @@
 # 配置说明
 
-所有仓库内路径相对于 MicroBind 根目录。部署参数写入 `.env`，被分析项目的业务规则写入该项目根目录的 `project.yml`。
+本文中的仓库路径均相对于 MicroBind 根目录。部署参数在 `.env` 中配置，待分析项目的业务授权规则在该项目根目录的 `project.yml` 中配置。
 
 ## 部署参数
 
@@ -10,15 +10,15 @@
 COMPOSE_PROJECT_NAME=microbind_team_a
 BIND_ADDRESS=127.0.0.1
 WEB_PORT=18082
-API_IMAGE=microbind-team-a-api:0.3.2
-WEB_IMAGE=microbind-team-a-web:0.3.2
-VERIFY_IMAGE=microbind-team-a-verify:0.3.2
+API_IMAGE=microbind-team-a-api:0.3.4
+WEB_IMAGE=microbind-team-a-web:0.3.4
+VERIFY_IMAGE=microbind-team-a-verify:0.3.4
 MICROBIND_VERIFY_ENABLED=1
 COMPOSE_PROFILES=verify
 MICROBIND_LLM_ENABLED=0
 ```
 
-静态模式将 `MICROBIND_VERIFY_ENABLED` 改为 `0`、`COMPOSE_PROFILES` 留空。初始化只在 `.env` 不存在时执行；已有实例直接编辑此文件。
+只运行静态分析时，将 `MICROBIND_VERIFY_ENABLED` 设为 `0`，并将 `COMPOSE_PROFILES` 留空。已有 `.env` 时直接编辑，初始化脚本会保留该文件。
 
 资源默认值：
 
@@ -82,11 +82,11 @@ analysis:
 | `trusted_identity` | 完整类名和方法名，值为 `user`、`tenant` 或 `role`；方法应从认证上下文取身份 |
 | `policies` | 键为 SQL 表名；`owner`/`tenant` 指实际列名，`role` 指业务角色；只有公开读接口配置 `public: true` |
 | `repair` | 初始保留 `{}`；确定入口已有可调用的授权检查后，再填写 guard 和身份表达式 |
-| `analysis` | 调用深度及状态预算；Web 上传的上限为 `30/128`，更小的正整数保留 |
+| `analysis` | 最大调用深度和路径状态数；Web 上传时分别限制为 `30` 和 `128`，配置值更小时使用配置值 |
 
-`owner_guard: auth.requireOwner`、`role_guard: auth.requireAdmin` 和 `current_user: CurrentUser.userId()` 是修复配置示例，必须对应入口中实际存在且可调用的方法。请求参数和任意请求头不能仅凭配置成为可信身份。当前自定义 `@LoginUser` 参数解析器不会自动识别。
+`owner_guard: auth.requireOwner`、`role_guard: auth.requireAdmin` 和 `current_user: CurrentUser.userId()` 是修复配置示例，必须对应入口中实际存在且可调用的方法。可信身份应来自认证上下文，不能直接使用未经校验的请求参数或请求头。当前尚不能自动识别自定义 `@LoginUser` 参数解析器。
 
-`trust_boundary` 用于记录网关和身份过滤器的证据位置，配置本身不验证部署边界。`include_classes` 用于一个文件包含多个逻辑服务的样例；普通项目无需填写。非 Java 服务可声明 `language`，分析器会报告不支持的范围。
+`trust_boundary` 记录网关和身份过滤器的源码位置，实际部署中的访问控制仍需单独核对。`include_classes` 用于一个文件包含多个逻辑服务的样例；普通项目无需填写。非 Java 服务可声明 `language`，分析器会报告不支持的范围。
 
 检查并运行：
 
@@ -106,7 +106,7 @@ zip -r my-project.zip project.yml order-service data-service \
 
 ## 可选模型复核
 
-基础流程不需要模型。启用时在 `.env` 填写实际服务参数：
+静态分析和修复无需模型。启用模型复核时，在 `.env` 中填写服务参数：
 
 ```dotenv
 MICROBIND_LLM_ENABLED=1
@@ -117,6 +117,6 @@ MICROBIND_LLM_ALLOW_HTTP=0
 MICROBIND_SMART_MAX_FINDINGS=8
 ```
 
-`model.example.com` 和其余值是占位示例。重新创建容器后，再在任务中开启“智能复核”。服务须支持 Chat Completions 的工具调用协议；只读证据工具包括方法、SQL、路径、策略及方法搜索。无鉴权的本地模型可留空密钥；只有确需明文 HTTP 的可信内网端点才将 `ALLOW_HTTP` 改为 `1`。
+将示例中的地址、模型名和密钥替换为实际值，重新创建容器后，在任务中开启“智能复核”。服务须支持 Chat Completions 的工具调用协议；只读证据工具包括方法、SQL、路径、策略及方法搜索。无鉴权的本地模型可留空密钥；只有确需明文 HTTP 的可信内网端点才将 `ALLOW_HTTP` 改为 `1`。
 
-模型将收到相关源码证据，返回意见单独展示，不覆盖静态状态。关闭部署开关时，UI 禁用选项，API 拒绝 `smart=true`。模型密钥只在后端配置，不进入前端打包文件。
+模型会收到相关源码片段，复核意见单独展示，静态分析结论保留在原结果中。关闭部署开关时，UI 禁用选项，API 拒绝 `smart=true`。模型密钥只在后端配置，不进入前端打包文件。

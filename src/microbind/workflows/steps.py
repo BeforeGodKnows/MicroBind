@@ -67,7 +67,7 @@ def verify(ctx):
         if os.getenv("MICROBIND_MAVEN_SETTINGS")
         else None
     )
-    ctx.progress("编译并验证原始服务的 HTTP 与数据库效果")
+    ctx.progress("编译原始服务，检查 HTTP 响应和数据库状态")
     original = verify_lab(
         ctx.source,
         ctx.output / "runtime-before",
@@ -75,7 +75,7 @@ def verify(ctx):
         os.getenv("MICROBIND_MAVEN", "mvn"),
         settings,
     )
-    ctx.progress("验证修复后服务与正常业务")
+    ctx.progress("检查修复后越权请求与正常请求的结果")
     fixed = verify_lab(
         ctx.values["fixed_source"],
         ctx.output / "runtime-after",
@@ -99,7 +99,7 @@ def verify(ctx):
     dump(ctx.output / "patches" / "repair_plan.json", result["repair"]["plan"])
     dump(ctx.output / "result.json", result)
     if not result["verification"]["passed"]:
-        raise RuntimeError("HTTP/数据库回归验证未通过，详见结果")
+        raise RuntimeError("HTTP 或数据库回归测试未通过，请查看验证结果")
     ctx.values["runtime_done"] = True
 
 

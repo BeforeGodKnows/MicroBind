@@ -31,9 +31,7 @@ def process_one(store, kind="scan", timeout=1800):
                 store.update(job["id"])
                 time.sleep(2)
             if child.returncode:
-                raise RuntimeError(
-                    "分析失败，检查 project.yml 和覆盖范围；服务端 worker.log 保存了错误位置"
-                )
+                raise RuntimeError("分析失败，请检查项目配置和源码；详细错误见服务端 worker.log")
         store.update(job["id"], status="succeeded", stage="完成")
     except (Exception, KeyboardInterrupt) as error:
         store.update(job["id"], status="failed", stage="任务失败", error=str(error)[:300])

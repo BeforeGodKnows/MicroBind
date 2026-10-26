@@ -39,7 +39,7 @@ import { SamplesGuide, SkillCatalog } from "./modules/Extensions";
 
 const labels: Record<string, string> = {
   suspected: "疑似缺陷",
-  covered: "已有覆盖",
+  covered: "已满足授权要求",
   needs_review: "待确认",
   queued: "排队中",
   running: "分析中",
@@ -59,7 +59,7 @@ const colors: Record<string, string> = {
 const reasons: Record<string, string> = {
   missing_owner: "缺少对象归属约束",
   object_mismatch: "检查与操作对象不一致",
-  untrusted_subject: "身份来自可控请求",
+  untrusted_subject: "授权身份由请求方提供",
   missing_tenant: "缺少租户范围约束",
   missing_role: "缺少角色检查",
   unknown_policy: "策略需要确认",
@@ -178,7 +178,7 @@ function MicroBind() {
         <Card style={{ width: 420 }}>
           <div className="brand">
             M<span>MicroBind</span>
-            <Tag>0.3</Tag>
+            <Tag>0.3.4</Tag>
           </div>
           <Typography.Title level={3}>微服务授权分析</Typography.Title>
           <Typography.Paragraph type="secondary">
@@ -217,16 +217,16 @@ function MicroBind() {
           onClick={(e) => setSection(e.key)}
           items={[
             { key: "workspace", label: "分析工作台" },
-            { key: "samples", label: "上游样例与实测" },
+            { key: "samples", label: "示例项目" },
             { key: "skills", label: "技能与执行流程" },
-            { key: "method", label: "技术依据与改进方向" },
-            { key: "settings", label: "部署与智能分析" },
+            { key: "method", label: "设计与参考" },
+            { key: "settings", label: "模型与部署" },
           ]}
         />
         <div className="sidebar-footer">
-          MicroBind · v0.3.2
+          MicroBind · v0.3.4
           <br />
-          源码证据 / 小补丁 / 回归验证
+          源码分析 / 补丁生成 / 运行验证
         </div>
       </Layout.Sider>
       <Layout>
@@ -236,12 +236,12 @@ function MicroBind() {
               {section === "workspace"
                 ? "项目与分析任务"
                 : section === "method"
-                  ? "技术依据与改进方向"
+                  ? "设计与参考"
                   : section === "samples"
-                    ? "上游样例与实测"
+                    ? "示例项目"
                     : section === "skills"
                       ? "技能与执行流程"
-                      : "部署与智能分析"}
+                      : "模型与部署"}
             </b>
             <Tag>Java · Spring · MyBatis</Tag>
           </Space>
@@ -285,14 +285,14 @@ function MicroBind() {
               <div className="page-intro">
                 <div>
                   <Typography.Title level={2}>
-                    把授权检查追到实际操作的对象
+                    分析微服务中的授权检查
                   </Typography.Title>
                   <Typography.Paragraph type="secondary">
                     从服务入口到
-                    SQL，查看检查是否覆盖目标对象，再生成可复核的小补丁。
+                    SQL，核对授权检查与数据操作的对象，并查看修复建议。
                   </Typography.Paragraph>
                 </div>
-                <Tag color="blue">独立任务运行</Tag>
+                <Tag color="blue">异步分析</Tag>
               </div>
               <Card
                 title="提交分析"
@@ -350,7 +350,7 @@ function MicroBind() {
                     </label>
                     <small>
                       {caps?.smart_configured
-                        ? "按需查询方法与 SQL"
+                        ? "通过源码查询工具复核结果"
                         : caps?.smart_enabled
                           ? "配置模型地址与名称"
                           : "服务器已关闭模型功能"}
@@ -366,7 +366,7 @@ function MicroBind() {
                         disabled={verify}
                       />
                     </label>
-                    <small>在新副本中修改与复查</small>
+                    <small>生成源码副本并重新分析</small>
                   </div>
                   <div>
                     <label>
@@ -382,7 +382,7 @@ function MicroBind() {
                         disabled={!caps?.verify_enabled || project !== "demo"}
                       />
                     </label>
-                    <small>内置靶场 HTTP / 数据库断言</small>
+                    <small>检查内置靶场的请求和数据</small>
                   </div>
                   <Button
                     type="primary"
@@ -394,7 +394,7 @@ function MicroBind() {
                   </Button>
                 </div>
                 <p className="hint">
-                  导入包需包含唯一的 project.yml
+                  导入包需包含一份 project.yml
                   和源码；上传项目只做静态分析。开启智能复核后，相关源码片段会发送至服务端配置的模型。
                 </p>
               </Card>
@@ -429,7 +429,7 @@ function MicroBind() {
                       title: "类型",
                       render: (_, j) => (
                         <Space>
-                          {j.kind === "verify" ? "完整运行验证" : "源码分析"}
+                          {j.kind === "verify" ? "分析与运行验证" : "源码分析"}
                           {j.options.smart && <Tag>智能</Tag>}
                         </Space>
                       ),
@@ -544,7 +544,7 @@ function MicroBind() {
                           }
                           showIcon
                           title={result.before.assessment.message}
-                          description={`入口 ${result.before.summary.entries}；形成操作记录的入口 ${result.before.assessment.entries_with_operation_result}；存在覆盖缺口的入口 ${result.before.assessment.entries_with_gaps}。`}
+                          description={`入口 ${result.before.summary.entries}；识别到数据操作的入口 ${result.before.assessment.entries_with_operation_result}；未完整分析的入口 ${result.before.assessment.entries_with_gaps}。`}
                         />
                       )}
                       <div className="metrics">
@@ -557,7 +557,7 @@ function MicroBind() {
                           value={result.before.summary.needs_review || 0}
                         />
                         <Statistic
-                          title="已有覆盖"
+                          title="已满足授权要求"
                           value={result.before.summary.covered || 0}
                         />
                         <Statistic
@@ -565,7 +565,7 @@ function MicroBind() {
                           value={result.before.summary.rpc_edges || 0}
                         />
                         <Statistic
-                          title="补丁后疑似缺陷"
+                          title="修复后疑似缺陷"
                           value={
                             result.after
                               ? result.after.summary.suspected || 0
@@ -581,10 +581,10 @@ function MicroBind() {
                               ? "上游原始样例"
                               : "导入项目"}
                         </Tag>
-                        静态判定与模型复核分别保留。
+                        静态分析和模型意见分别展示。
                         {result.verification
-                          ? "下方含实际 HTTP 与数据库验证。"
-                          : "本任务未执行服务，补丁效果以静态复查为依据。"}
+                          ? "运行验证结果包含 HTTP 响应和数据库检查。"
+                          : "本任务未运行服务，修复建议仍需结合业务验证。"}
                       </div>
                       <Tabs
                         defaultActiveKey="findings"
@@ -623,7 +623,7 @@ function MicroBind() {
                                   onChange={setFilter}
                                   style={{ width: 160, marginBottom: 16 }}
                                   options={[
-                                    { value: "all", label: "全部发现" },
+                                    { value: "all", label: "全部结果" },
                                     ...[
                                       "suspected",
                                       "covered",
@@ -664,7 +664,7 @@ function MicroBind() {
                                         (f.operation.table || "表名未解析"),
                                     },
                                     {
-                                      title: "缺口",
+                                      title: "说明",
                                       render: (_, f) =>
                                         f.missing
                                           .map(
@@ -674,7 +674,7 @@ function MicroBind() {
                                           .join("；") ||
                                         (f.status === "needs_review"
                                           ? "分析不完整"
-                                          : "条件已覆盖"),
+                                          : "已满足授权要求"),
                                     },
                                     {
                                       title: "证据",
@@ -705,7 +705,7 @@ function MicroBind() {
                                       ? "本任务未开启智能复核"
                                       : "工具查询记录与模型意见"
                                   }
-                                  description="模型可查询方法、SQL、跨服务路径和策略；意见分歧不会自动抹掉静态发现。"
+                                  description="模型通过只读工具查询方法、SQL、跨服务路径和策略，复核意见单独保存，供你与静态结果对照。"
                                 />
                                 <div className="block">
                                   {result.smart.results.map((m: any) => (
@@ -744,7 +744,7 @@ function MicroBind() {
                                   {result.smart.skipped_finding_ids?.length >
                                     0 && (
                                     <p>
-                                      达到本次模型预算，另有{" "}
+                                      已达到本次复核上限，另有{" "}
                                       {result.smart.skipped_finding_ids.length}{" "}
                                       条未复核。
                                     </p>
@@ -766,28 +766,28 @@ function MicroBind() {
                                   }
                                   title={
                                     result.verification.passed
-                                      ? "真实服务回归通过"
-                                      : "存在未通过的回归项"
+                                      ? "靶场回归测试通过"
+                                      : "部分回归测试未通过"
                                   }
                                   showIcon
                                 />
                                 <div className="metrics">
                                   <Statistic
-                                    title="修复前越权效果"
+                                    title="修复前越权请求生效数"
                                     value={
                                       result.verification.before.summary
                                         .unauthorized_effects_observed
                                     }
                                   />
                                   <Statistic
-                                    title="修复后越权效果"
+                                    title="修复后越权请求生效数"
                                     value={
                                       result.verification.after.summary
                                         .unauthorized_effects_observed
                                     }
                                   />
                                   <Statistic
-                                    title="修复后正常请求通过"
+                                    title="正常请求通过数"
                                     value={
                                       result.verification.after.summary
                                         .legitimate_requests_passed
@@ -814,9 +814,9 @@ function MicroBind() {
                                         c.endpoint.join(" "),
                                     },
                                     {
-                                      title: "越权效果",
+                                      title: "越权请求",
                                       render: (_, c: any) =>
-                                        c.attack.effect ? "发生" : "未发生",
+                                        c.attack.effect ? "生效" : "未生效",
                                     },
                                     {
                                       title: "正常请求",
@@ -835,7 +835,7 @@ function MicroBind() {
                                 />
                               </>
                             ) : (
-                              <Empty description="未运行。启用 verify 容器后，可为内置靶场提交完整验证任务。" />
+                              <Empty description="尚未执行运行验证。请先启用验证服务，再为内置靶场开启“运行验证”。" />
                             ),
                           },
                           {
@@ -847,12 +847,12 @@ function MicroBind() {
                             children: (
                               <>
                                 <p>
-                                  未解析语法和未连接调用单独保留，便于区分‘没有发现’与‘尚未覆盖’。
+                                  以下列出尚未解析的语法和调用，相关路径需要人工核对。
                                 </p>
                                 {result.before.coverage_gaps.length ? (
                                   json(result.before.coverage_gaps)
                                 ) : (
-                                  <Empty description="本次解析未记录覆盖缺口" />
+                                  <Empty description="本次分析未记录不支持的语法或调用" />
                                 )}
                               </>
                             ),
@@ -868,7 +868,7 @@ function MicroBind() {
           {section === "method" && <MethodGuide />}
           {section === "settings" && (
             <>
-              <Typography.Title level={2}>部署与智能分析</Typography.Title>
+              <Typography.Title level={2}>模型与部署</Typography.Title>
               <Card title="当前实例">
                 <Descriptions
                   column={1}
@@ -892,7 +892,7 @@ function MicroBind() {
                   ]}
                 />
               </Card>
-              <Card title="开启方式" className="block">
+              <Card title="配置模型复核" className="block">
                 <p>
                   在部署目录 .env 中设置 MICROBIND_LLM_ENABLED=1、MICROBIND_LLM_BASE_URL（包含
                   /v1）、MICROBIND_LLM_MODEL 和 MICROBIND_LLM_API_KEY，然后重新创建
@@ -907,13 +907,13 @@ function MicroBind() {
                 <p>
                   运行命令、离线导入和资源调整见仓库 docs/DEPLOYMENT.md。MCP
                   客户端可使用 microbind-mcp
-                  读取同一套源码证据工具；此版本没有调用 IDA。
+                  查询项目的方法、SQL、路径和策略证据。
                 </p>
               </Card>
             </>
           )}
           <footer>
-            MicroBind v0.3.2 · 分析结论以配置的授权策略和可解析代码为边界
+            MicroBind v0.3.4 · 分析结果依据项目配置，未支持的路径请查看覆盖范围
           </footer>
         </Layout.Content>
       </Layout>
@@ -951,7 +951,7 @@ function MicroBind() {
                     <>
                       <h4>实际对象</h4>
                       {json(context.object)}
-                      <h4>要求与事实</h4>
+                      <h4>授权要求与已知条件</h4>
                       {json({
                         required: context.required,
                         facts: context.facts,
@@ -966,7 +966,7 @@ function MicroBind() {
                   label: "修复建议",
                   children: patch ? (
                     <>
-                      <p>{patch.reason || "基于源码证据生成的小补丁"}</p>
+                      <p>{patch.reason || "根据源码分析生成的修复补丁"}</p>
                       <p>位置：{patch.file}</p>
                       <Tag
                         color={
@@ -989,7 +989,7 @@ function MicroBind() {
                         <summary>补丁元数据</summary>
                         {json(patch)}
                       </details>
-                      <p>原始项目保留；修改副本和 diff 位于下载包中。</p>
+                      <p>下载包包含修改后的源码副本和 diff，原始项目保持原样。</p>
                     </>
                   ) : (
                     <Empty description="当前发现没有可自动生成的补丁" />
@@ -1016,10 +1016,10 @@ function MicroBind() {
 function MethodGuide() {
   return (
     <>
-      <Typography.Title level={2}>这套分析从哪里来</Typography.Title>
+      <Typography.Title level={2}>分析方法与参考工作</Typography.Title>
       <Typography.Paragraph>
-        以下工作提供方法参考，MicroBind 的分析代码独立实现。仓库
-        docs/RESEARCH.md 记录了阅读文件和固定版本。
+        我们参考以下工作实现了跨服务连接、授权检查和修复。仓库
+        docs/RESEARCH.md 列出了具体采用范围和参考版本。
       </Typography.Paragraph>
       <Table
         pagination={false}
@@ -1048,7 +1048,7 @@ function MethodGuide() {
           {
             name: "FixMeUp",
             idea: "复用已有检查进行修复",
-            here: "生成对象参数、已有 guard 和 SQL 条件的小改动。",
+            here: "复用已有授权检查，调整对象参数和 SQL 条件。",
           },
         ]}
         columns={[
@@ -1057,22 +1057,22 @@ function MethodGuide() {
           { title: "本项目实现", dataIndex: "here" },
         ]}
       />
-      <Card title="下一步优先提高哪里" className="block">
+      <Card title="后续计划" className="block">
         <ol>
           <li>
-            先补调用与数据访问覆盖：接口实现、复杂 Feign 参数、动态
-            SQL。路径丢失会直接导致漏报。
+            优先补充接口实现、复杂 Feign 参数和动态
+            SQL 的解析，减少调用路径丢失造成的漏报。
           </li>
           <li>
-            再提高检查语义：哪些身份可信、检查哪个对象、失败后能否继续、是否覆盖所有分支。
+            完善可信身份和授权检查的解析，核对检查对象、失败分支以及后续数据操作。
           </li>
-          <li>把业务策略与间接归属关系补齐，例如订单项通过订单归属用户。</li>
+          <li>支持更多业务规则和间接归属关系，例如通过订单确定订单项的归属用户。</li>
           <li>
-            用同一批真实项目标注，比较纯静态、一次性模型复核与工具辅助复核的误报、漏报和成本。
+            使用同一批已标注项目，比较静态分析与不同模型复核方式的误报、漏报和运行成本。
           </li>
         </ol>
         <p>
-          可研究的增量是“检查对象—传递对象—数据库对象”的对应关系及修复位置选择。是否优于已有工作，需要在共同样本上验证。
+          详细任务和验证方式见 docs/ROADMAP.md。
         </p>
       </Card>
     </>

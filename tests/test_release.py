@@ -3,6 +3,7 @@
 import hashlib
 import importlib.util
 import json
+import shlex
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -18,7 +19,7 @@ spec.loader.exec_module(release)
 def project(tmp_path):
     root = tmp_path / "project"
     root.mkdir()
-    (root / "pyproject.toml").write_text('[project]\nversion = "0.3.2"\n')
+    (root / "pyproject.toml").write_text('[project]\nversion = "0.3.4"\n')
     (root / "README.md").write_text("Example project\n")
     return root
 
@@ -75,3 +76,22 @@ def test_package_rejects_symlink_to_external_file(tmp_path):
     (root / "src/link.py").symlink_to(secret)
     with pytest.raises(ValueError, match="symlink"):
         release.build_archive(root, root / "out/release")
+
+
+def test_release_contains_local_docker_build_inputs(tmp_path):
+    root = Path(__file__).resolve().parents[1]
+    result = release.build_archive(root, tmp_path / "release")
+    with ZipFile(result["archive"]) as package:
+        names = {name.removeprefix("microbind/") for name in package.namelist()}
+    for dockerfile in (root / "deploy").glob("Dockerfile.*"):
+        for line in dockerfile.read_text().splitlines():
+            if not line.startswith("COPY "):
+                continue
+            fields = shlex.split(line)
+            if fields[1].startswith("--from="):
+                continue
+            for source in fields[1:-1]:
+                source = source.rstrip("/")
+                assert source in names or any(name.startswith(source + "/") for name in names), (
+                    f"{dockerfile.name}: COPY input missing from release: {source}"
+                )
