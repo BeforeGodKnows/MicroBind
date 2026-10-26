@@ -74,11 +74,14 @@ function MicroBind() {
   const [logged, setLogged] = useState(!!token()),
     [credential, setCredential] = useState(""),
     [section, setSection] = useState("workspace");
+  const [authRequired, setAuthRequired] = useState(true),
+    [checkingAccess, setCheckingAccess] = useState(true);
   const [projects, setProjects] = useState<Project[]>([]),
     [jobs, setJobs] = useState<Job[]>([]),
     [caps, setCaps] = useState<Capabilities | null>(null);
   const [project, setProject] = useState("demo"),
     [smart, setSmart] = useState(false),
+    [thinking, setThinking] = useState(true),
     [repair, setRepair] = useState(true),
     [verify, setVerify] = useState(false);
   const [busy, setBusy] = useState(false),
@@ -98,6 +101,23 @@ function MicroBind() {
     setCaps(c);
     setError("");
   };
+  useEffect(() => {
+    let active = true;
+    api<{ auth_required?: boolean }>("/health")
+      .then((health) => {
+        if (!active) return;
+        setAuthRequired(health.auth_required !== false);
+        if (health.auth_required === false) {
+          sessionStorage.removeItem("microbind-token");
+          setLogged(true);
+        }
+      })
+      .catch((e) => active && setError(e.message))
+      .finally(() => active && setCheckingAccess(false));
+    return () => {
+      active = false;
+    };
+  }, []);
   useEffect(() => {
     if (!logged) return;
     let active = true;
@@ -149,6 +169,7 @@ function MicroBind() {
           project_id: project,
           kind: verify ? "verify" : "scan",
           smart,
+          thinking,
           repair,
         }),
       });
@@ -172,19 +193,33 @@ function MicroBind() {
       p.id === finding?.id ||
       JSON.stringify(p.endpoint) === JSON.stringify(finding?.endpoint),
   );
+  if (checkingAccess)
+    return (
+      <div className="login">
+        <Spin size="large" />
+      </div>
+    );
   if (!logged)
     return (
       <div className="login">
         <Card style={{ width: 420 }}>
           <div className="brand">
-            M<span>MicroBind</span>
-            <Tag>0.3.4</Tag>
+            <span>MicroBind</span>
+            <Tag>v0.3.4</Tag>
           </div>
           <Typography.Title level={3}>微服务授权分析</Typography.Title>
           <Typography.Paragraph type="secondary">
-            输入实例访问令牌。令牌位于部署目录的 secrets/api_token.txt
-            中。
+            输入此 MicroBind 实例的访问令牌，请向部署者获取。
+            这是工作台的登录凭证，与模型 API Key 无关。
           </Typography.Paragraph>
+          {error && (
+            <Alert
+              title={error}
+              type="error"
+              showIcon
+              style={{ marginBottom: 16 }}
+            />
+          )}
           <Input.Password
             aria-label="访问令牌"
             placeholder="输入访问令牌"
@@ -208,7 +243,7 @@ function MicroBind() {
     <Layout className="shell">
       <Layout.Sider width={220} breakpoint="lg" collapsedWidth="64">
         <div className="brand inverse">
-          M<span>MicroBind</span>
+          <span>MicroBind</span>
         </div>
         <div className="sidebar-note">微服务授权分析工作台</div>
         <Menu
@@ -245,15 +280,19 @@ function MicroBind() {
             </b>
             <Tag>Java · Spring · MyBatis</Tag>
           </Space>
-          <Button
-            size="small"
-            onClick={() => {
-              sessionStorage.removeItem("microbind-token");
-              setLogged(false);
-            }}
-          >
-            退出
-          </Button>
+          {authRequired ? (
+            <Button
+              size="small"
+              onClick={() => {
+                sessionStorage.removeItem("microbind-token");
+                setLogged(false);
+              }}
+            >
+              退出
+            </Button>
+          ) : (
+            <Tag>内网免登录</Tag>
+          )}
         </Layout.Header>
         <Layout.Content className="content">
           {error && (
@@ -354,6 +393,23 @@ function MicroBind() {
                         : caps?.smart_enabled
                           ? "配置模型地址与名称"
                           : "服务器已关闭模型功能"}
+                    </small>
+                  </div>
+                  <div>
+                    <label>
+                      思考模式{" "}
+                      <Switch
+                        size="small"
+                        checked={thinking}
+                        onChange={setThinking}
+                        aria-label="思考模式"
+                        disabled={!smart || !caps?.thinking_supported}
+                      />
+                    </label>
+                    <small>
+                      {caps?.thinking_supported
+                        ? "默认开启，仅对本次模型复核生效"
+                        : "配置支持思考模式的模型后可切换"}
                     </small>
                   </div>
                   <div>
@@ -897,6 +953,10 @@ function MicroBind() {
                   在部署目录 .env 中设置 MICROBIND_LLM_ENABLED=1、MICROBIND_LLM_BASE_URL（包含
                   /v1）、MICROBIND_LLM_MODEL 和 MICROBIND_LLM_API_KEY，然后重新创建
                   API 与 worker 容器。模型需支持 Chat Completions 工具调用。
+                </p>
+                <p>
+                  提交分析时可切换“思考模式”，默认开启。当前支持 DeepSeek 的思考开关；
+                  未启用智能复核时，该开关不触发模型调用。
                 </p>
                 {json({
                   MICROBIND_LLM_ENABLED: 1,

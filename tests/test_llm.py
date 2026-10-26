@@ -29,7 +29,11 @@ def test_invalid_model_verdict_rejected():
         validate({**VALID, "verdict": "proven_secure"}, CONTEXT)
 
 
-def test_transport_schema_and_cache_with_local_stub(tmp_path):
+@pytest.mark.parametrize(
+    "model,thinking",
+    [("stub-contract-test", True), ("deepseek-flash", True), ("deepseek-flash", False)],
+)
+def test_transport_schema_and_cache_with_local_stub(tmp_path, model, thinking):
     class Handler(BaseHTTPRequestHandler):
         calls = 0
 
@@ -39,7 +43,12 @@ def test_transport_schema_and_cache_with_local_stub(tmp_path):
         def do_POST(self):
             type(self).calls += 1
             body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
-            assert body["model"] == "stub-contract-test"
+            assert body["model"] == model
+            if model == "deepseek-flash":
+                assert body["thinking"] == {"type": "enabled" if thinking else "disabled"}
+                assert ("temperature" not in body) is thinking
+            else:
+                assert "thinking" not in body
             assert body["response_format"]["type"] == "json_object"
             self.send_response(200)
             self.end_headers()
@@ -58,8 +67,9 @@ def test_transport_schema_and_cache_with_local_stub(tmp_path):
     try:
         kwargs = {
             "base_url": f"http://127.0.0.1:{server.server_port}/v1",
-            "model": "stub-contract-test",
+            "model": model,
             "api_key": "",
+            "thinking": thinking,
         }
         first = review(CONTEXT, tmp_path, **kwargs)
         second = review(CONTEXT, tmp_path, **kwargs)

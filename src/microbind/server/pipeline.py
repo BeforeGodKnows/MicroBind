@@ -24,6 +24,7 @@ def run(data, id):
         )
         source = output / "original-project"
     ctx = Context(source, output, project_info, lambda stage: store.update(id, stage=stage))
+    ctx.values["thinking"] = job["options"].get("thinking", True)
     plan = make_plan(
         smart=job["options"].get("smart", False),
         repair=job["options"].get("repair", True),

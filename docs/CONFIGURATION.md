@@ -42,6 +42,12 @@ docker compose up -d --no-build --pull never
 
 `docker compose restart` 不重新读取环境变量。改动依赖源、基础镜像或代码后运行 `bash scripts/deploy.sh online`。详细镜像和网络设置见 [部署指南](DEPLOYMENT.md)。
 
+### 工作台访问
+
+`MICROBIND_AUTH_REQUIRED=1` 为默认值，访问工作台和业务 API 需要实例令牌。初始化脚本将令牌写入 `secrets/api_token.txt`；直接运行 API 时，可用 `MICROBIND_TOKEN_FILE` 指定其他文件。这个令牌由 MicroBind 生成，与模型服务的 API Key 无关。
+
+仅供可信内网使用、且不需要登录时，在 `.env` 中设置 `MICROBIND_AUTH_REQUIRED=0`，然后重新创建 API 容器。页面会直接进入工作台。此时所有能访问实例的人都可以上传源码、提交任务、查看和删除结果，原有的上传限制及运行验证范围仍然生效。恢复为 `1` 并重新创建容器即可恢复令牌验证。
+
 ## 接入源码
 
 将 `config/project.example.yml` 复制到待分析源码根目录，命名为 `project.yml`。下例假设两个服务的源码及资源目录分别在 `order-service/src` 和 `data-service/src`：
@@ -120,3 +126,20 @@ MICROBIND_SMART_MAX_FINDINGS=8
 将示例中的地址、模型名和密钥替换为实际值，重新创建容器后，在任务中开启“智能复核”。服务须支持 Chat Completions 的工具调用协议；只读证据工具包括方法、SQL、路径、策略及方法搜索。无鉴权的本地模型可留空密钥；只有确需明文 HTTP 的可信内网端点才将 `ALLOW_HTTP` 改为 `1`。
 
 模型会收到相关源码片段，复核意见单独展示，静态分析结论保留在原结果中。关闭部署开关时，UI 禁用选项，API 拒绝 `smart=true`。模型密钥只在后端配置，不进入前端打包文件。
+
+DeepSeek Flash 可使用以下配置，密钥从 DeepSeek 开放平台获取：
+
+```dotenv
+MICROBIND_LLM_ENABLED=1
+MICROBIND_LLM_BASE_URL=https://api.deepseek.com/v1
+MICROBIND_LLM_MODEL=deepseek-flash
+MICROBIND_LLM_API_KEY=replace-with-your-deepseek-key
+```
+
+模型名及接口见 [DeepSeek 官方文档](https://api-docs.deepseek.com/quick_start/agent_integrations/)。修改模型配置后需重新创建 API、worker 和 verifier 容器。
+
+启用“智能复核”后，“思考模式”默认开启，可在提交任务前关闭。API 的 `thinking` 字段默认为 `true`；后端将本次选择传入队列和模型请求。对于 `deepseek-` 开头的模型，分别发送 `thinking.type=enabled` 或 `disabled`，思考模式下保留多轮工具调用所需的 `reasoning_content`。两种模式使用不同缓存，避免切换后复用另一模式的结果。其他尚未适配思考开关的兼容服务保持原有请求格式，页面禁用该开关。
+
+思考模式的单次输出上限为 16384 token（包括思考与回答），仍受工具次数和复核总时限限制。命令行 `scan --smart` 和 `scan --llm` 默认开启思考，可追加 `--no-thinking` 关闭。关闭思考不会关闭模型复核；未开启模型复核时，思考选项不会触发外部请求。
+
+协议测试使用本地模拟服务，覆盖两种模式、默认值和工具调用续接，不代表已经完成真实 DeepSeek 调用或模型效果评估。参数说明见 [DeepSeek 思考模式文档](https://api-docs.deepseek.com/guides/thinking_mode/)。

@@ -14,6 +14,7 @@ from starlette.concurrency import run_in_threadpool
 
 from .. import __version__
 from ..model_config import enabled as model_enabled
+from ..model_config import supports_thinking
 from .config import Settings
 from .sources import unpack
 from .store import Store
@@ -23,6 +24,7 @@ class JobRequest(BaseModel):
     project_id: str
     kind: str = "scan"
     smart: bool = False
+    thinking: bool = True
     repair: bool = True
 
 
@@ -47,6 +49,8 @@ def create_app(settings=None):
     bearer = HTTPBearer(auto_error=False)
 
     def auth(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)):
+        if not settings.auth_required:
+            return
         if not credentials or not hmac.compare_digest(credentials.credentials, settings.token):
             raise HTTPException(401, "访问令牌无效")
 
@@ -58,7 +62,7 @@ def create_app(settings=None):
 
     @app.get("/api/health")
     def health():
-        return {"status": "ok", "version": __version__}
+        return {"status": "ok", "version": __version__, "auth_required": settings.auth_required}
 
     @app.get("/api/capabilities", dependencies=[Depends(auth)])
     def capabilities():
@@ -69,6 +73,7 @@ def create_app(settings=None):
             "smart_configured": model_enabled()
             and bool(os.getenv("MICROBIND_LLM_BASE_URL") and os.getenv("MICROBIND_LLM_MODEL")),
             "model": os.getenv("MICROBIND_LLM_MODEL", ""),
+            "thinking_supported": supports_thinking(os.getenv("MICROBIND_LLM_MODEL", "")),
             "upload_limit_mb": settings.max_upload // 1024**2,
             "tools": ["get_method", "get_sql", "get_path", "get_policy", "search_methods"],
         }
@@ -121,7 +126,9 @@ def create_app(settings=None):
             raise HTTPException(400, "请先在服务端配置模型地址和模型名")
         try:
             id = store.enqueue(
-                request.project_id, request.kind, {"smart": request.smart, "repair": request.repair}
+                request.project_id,
+                request.kind,
+                {"smart": request.smart, "thinking": request.thinking, "repair": request.repair},
             )
         except ValueError as e:
             raise HTTPException(429, str(e)) from None

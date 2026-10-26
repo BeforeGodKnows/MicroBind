@@ -32,6 +32,7 @@ services:
     environment:
       <<: *model
       MICROBIND_TOKEN_FILE: /run/secrets/api_token
+      MICROBIND_AUTH_REQUIRED: ${MICROBIND_AUTH_REQUIRED:-1}
       MICROBIND_VERIFY_ENABLED: ${MICROBIND_VERIFY_ENABLED:-0}
     secrets: [api_token]
     volumes: [data:/data]

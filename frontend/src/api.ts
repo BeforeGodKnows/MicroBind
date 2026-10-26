@@ -7,13 +7,14 @@ export type Job = {
   stage: string;
   error?: string;
   created: number;
-  options: { smart: boolean; repair: boolean };
+  options: { smart: boolean; thinking?: boolean; repair: boolean };
 };
 export type Capabilities = {
   version: string;
   verify_enabled: boolean;
   smart_configured: boolean;
   smart_enabled: boolean;
+  thinking_supported: boolean;
   model: string;
   upload_limit_mb: number;
   tools: string[];
@@ -48,7 +49,7 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch("/api" + path, {
     ...init,
     headers: {
-      Authorization: "Bearer " + token(),
+      ...(token() ? { Authorization: "Bearer " + token() } : {}),
       ...(init.body instanceof FormData
         ? {}
         : { "Content-Type": "application/json" }),
@@ -69,7 +70,7 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 export async function download(id: string) {
   const r = await fetch("/api/jobs/" + id + "/download", {
-    headers: { Authorization: "Bearer " + token() },
+    headers: token() ? { Authorization: "Bearer " + token() } : {},
   });
   if (!r.ok) throw new Error("下载失败，请确认任务已经完成");
   const url = URL.createObjectURL(await r.blob());

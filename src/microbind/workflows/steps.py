@@ -41,7 +41,10 @@ def review(ctx):
 
     result = ctx.values["result"]
     result["smart"] = review_findings(
-        ctx.values["project"], result["before"], ctx.output / "smart-cache"
+        ctx.values["project"],
+        result["before"],
+        ctx.output / "smart-cache",
+        thinking=ctx.values.get("thinking", True),
     )
     dump(ctx.output / "smart.json", result["smart"])
     ctx.values["smart_done"] = True

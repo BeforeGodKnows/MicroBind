@@ -11,7 +11,7 @@ from .repair import apply_repairs, build_repairs
 from .report import dump, write_demo_overview, write_reports
 
 
-def scan(manifest, output, llm=False):
+def scan(manifest, output, llm=False, thinking=True):
     if llm:
         from .model_config import require_enabled
 
@@ -29,7 +29,7 @@ def scan(manifest, output, llm=False):
                     {
                         "finding_id": context["finding_id"],
                         "status": "completed",
-                        **review(context, Path(output) / "llm_cache"),
+                        **review(context, Path(output) / "llm_cache", thinking=thinking),
                     }
                 )
             except Exception as e:
@@ -56,6 +56,12 @@ def main(argv=None):
     p.add_argument("--out", type=Path, default=Path("out/scan"))
     p.add_argument("--llm", action="store_true")
     p.add_argument("--smart", action="store_true", help="启用模型复核，并限制工具调用次数和耗时")
+    p.add_argument(
+        "--no-thinking",
+        dest="thinking",
+        action="store_false",
+        help="关闭模型思考模式（默认开启，需模型支持）",
+    )
     p.add_argument("--fail-on-findings", action="store_true")
     p = sub.add_parser("repair", help="生成补丁，可应用到新的源码副本")
     p.add_argument("manifest", type=Path)
@@ -86,11 +92,13 @@ def main(argv=None):
                 from .model_config import require_enabled
 
                 require_enabled()
-            project, report = scan(args.manifest, args.out, args.llm)
+            project, report = scan(args.manifest, args.out, args.llm, args.thinking)
             if args.smart:
                 from .smart import review_findings
 
-                report["smart"] = review_findings(project, report, args.out / "smart-cache")
+                report["smart"] = review_findings(
+                    project, report, args.out / "smart-cache", thinking=args.thinking
+                )
                 write_reports(project, report, args.out)
                 dump(args.out / "smart.json", report["smart"])
             print(json.dumps(report["summary"], ensure_ascii=False, indent=2))

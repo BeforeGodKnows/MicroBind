@@ -13,7 +13,7 @@ MicroBind 是一个 Java 微服务授权分析与修复工具。它沿 Spring �
 - **证据查看**：展示调用路径、参数绑定、SQL 条件及源码位置，记录无法解析的语法和调用。
 - **补丁生成**：复用已有授权检查，调整对象参数或 SQL 条件。在源码副本上应用补丁并重新分析。
 - **运行验证**：在内置订单靶场中比较修复前后的 HTTP 响应和数据库状态，检查正常业务是否受影响。
-- **模型复核**：可选接入支持工具调用的模型，通过只读工具查询源码证据。模型复核默认关闭。
+- **模型复核**：可选接入支持工具调用的模型，通过只读工具查询源码证据。模型复核默认关闭；启用后可切换思考模式，思考默认开启。
 
 目前支持 Java 8 语法子集、常见 Spring 路由、Feign 调用和 MyBatis 静态 SQL。动态 SQL、自定义身份注入和复杂调用仍有未支持的情况，报告会列出相关路径。分析结果需要结合项目的业务授权规则判断，详见 [设计说明](docs/ARCHITECTURE.md)。
 
@@ -39,6 +39,49 @@ ssh -N -L 18080:127.0.0.1:18080 用户名@服务器地址
 同一服务器运行多个实例时，请分别设置 `.env` 中的 `COMPOSE_PROJECT_NAME`、`WEB_PORT` 和应用镜像标签。逐步配置、内网访问和常见问题见 [服务器部署示例](docs/LOCAL_SERVER.md)；资源限制、离线部署和备份见 [部署指南](docs/DEPLOYMENT.md)。
 
 修改 `.env` 后，运行 `docker compose up -d --no-build --pull never` 更新容器；修改源码或构建依赖后，重新运行 `bash scripts/deploy.sh online`。容器提供所需的 Python、Node 和 Java 环境。
+
+### 内网访问：免令牌
+
+可信内网中可关闭登录，在 `.env` 中设置：
+
+```dotenv
+BIND_ADDRESS=192.168.1.10
+MICROBIND_AUTH_REQUIRED=0
+```
+
+将地址替换为服务器实际内网 IP，重新创建容器后，访问 `http://服务器内网IP:18080` 即可进入工作台。所有可访问实例的人都能上传源码、提交任务、查看和删除结果。源码上传和内置靶场的执行限制仍然生效。
+
+### 外网访问：启用令牌
+
+仓库默认要求令牌。对外提供访问时，保持以下配置，并通过已有的 HTTPS 反向代理转发至本机端口：
+
+```dotenv
+BIND_ADDRESS=127.0.0.1
+MICROBIND_AUTH_REQUIRED=1
+```
+
+初始化脚本生成随机令牌，部署者在服务器上读取：
+
+```bash
+cat secrets/api_token.txt
+```
+
+将文件中的完整内容输入登录页。业务 API 使用 `Authorization: Bearer <实例令牌>`。如果调整了 secret 的挂载路径，以实际文件为准；令牌不要写入源码或提交到仓库。实例令牌与 DeepSeek 等模型服务的 API Key 是两个独立凭证。
+
+以上配置修改后需重新创建容器，单纯 `restart` 不会重新读取环境变量。外网实例应保留令牌验证；当前共享令牌不区分用户，需要独立账号或项目权限时，应在入口接入相应的认证服务。
+
+### 接入 DeepSeek Flash
+
+模型功能仍默认关闭。需要使用时，在服务端配置：
+
+```dotenv
+MICROBIND_LLM_ENABLED=1
+MICROBIND_LLM_BASE_URL=https://api.deepseek.com/v1
+MICROBIND_LLM_MODEL=deepseek-flash
+MICROBIND_LLM_API_KEY=replace-with-your-deepseek-key
+```
+
+重新创建 API、worker 和 verifier 容器后，在提交分析时开启“智能复核”。“思考模式”默认开启，可按本次任务关闭；后端会将选择写入模型请求。当前思考开关支持 DeepSeek，其他兼容模型在尚未适配时禁用该开关。模型密钥只配置在服务端，关闭工作台令牌不会免除模型服务的鉴权。更多说明见 [模型配置](docs/CONFIGURATION.md#可选模型复核)。
 
 ### 从旧版升级
 

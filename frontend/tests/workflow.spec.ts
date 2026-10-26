@@ -4,12 +4,7 @@ test("login, submit real task, inspect evidence and download patch bundle", asyn
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/");
-  await page
-    .getByLabel("访问令牌")
-    .fill("web-smoke-test-token-not-for-deployment");
-  await page.getByRole("button", { name: "进入工作台" }).click();
-  await expect(page.getByRole("button", { name: "开始分析" })).toBeVisible();
+  await login(page);
   await page.getByRole("button", { name: "开始分析" }).click();
   await expect(
     page.getByRole("button", { name: "下载证据与补丁" }),
@@ -41,11 +36,18 @@ test("login, submit real task, inspect evidence and download patch bundle", asyn
 });
 
 async function login(page: import("@playwright/test").Page) {
+  const health = await (await page.request.get("/api/health")).json();
   await page.goto("/");
-  await page
-    .getByLabel("访问令牌")
-    .fill("web-smoke-test-token-not-for-deployment");
-  await page.getByRole("button", { name: "进入工作台" }).click();
+  if (health.auth_required !== false) {
+    await page
+      .getByLabel("访问令牌")
+      .fill("web-smoke-test-token-not-for-deployment");
+    await page.getByRole("button", { name: "进入工作台" }).click();
+  } else {
+    await expect(page.getByLabel("访问令牌")).toHaveCount(0);
+    await expect(page.getByText("内网免登录", { exact: true })).toBeVisible();
+    expect(await page.evaluate(() => sessionStorage.getItem("microbind-token"))).toBeNull();
+  }
   await expect(page.getByRole("button", { name: "开始分析" })).toBeVisible();
 }
 
@@ -54,6 +56,8 @@ test("original upstream sample runs via real queue and shows coverage limits", a
 }) => {
   await login(page);
   await expect(page.getByRole("switch", { name: "智能复核" })).toBeDisabled();
+  await expect(page.getByRole("switch", { name: "思考模式" })).toBeChecked();
+  await expect(page.getByRole("switch", { name: "思考模式" })).toBeDisabled();
   await page.getByRole("menuitem", { name: "示例项目" }).click();
   await page
     .getByRole("row")
@@ -155,6 +159,42 @@ test("skill page is loaded from API and model switch remains disabled", async ({
     },
   });
   expect((await response.json()).length).toBe(5);
+});
+
+test("thinking switch defaults on and submits both choices", async ({ page }) => {
+  await page.route("**/api/capabilities", async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({
+      json: {
+        ...(await response.json()),
+        smart_enabled: true,
+        smart_configured: true,
+        thinking_supported: true,
+        model: "deepseek-flash",
+      },
+    });
+  });
+  await login(page);
+  const thinking = page.getByRole("switch", { name: "思考模式" });
+  await expect(thinking).toBeChecked();
+  await expect(thinking).toBeDisabled();
+  await page.getByRole("switch", { name: "智能复核" }).click();
+  await expect(thinking).toBeEnabled();
+  const submitted: any[] = [];
+  await page.route("**/api/jobs", async (route) => {
+    if (route.request().method() !== "POST") return route.continue();
+    submitted.push(route.request().postDataJSON());
+    // Check the UI request without sending source to a real model service.
+    await route.fulfill({ status: 400, json: { detail: "界面参数测试，不提交模型任务" } });
+  });
+  await page.getByRole("button", { name: "开始分析" }).click();
+  await expect.poll(() => submitted.length).toBe(1);
+  expect(submitted[0].smart).toBe(true);
+  expect(submitted[0].thinking).toBe(true);
+  await thinking.click();
+  await page.getByRole("button", { name: "开始分析" }).click();
+  await expect.poll(() => submitted.length).toBe(2);
+  expect(submitted[1].thinking).toBe(false);
 });
 
 test("full UI runtime verification executes real Java services without model", async ({

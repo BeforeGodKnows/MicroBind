@@ -203,7 +203,10 @@ def test_official_mcp_stdio_roundtrip():
             p.communicate()
 
 
-def test_chat_completions_http_transport(evidence, tmp_path):
+@pytest.mark.parametrize(
+    "model,thinking", [("protocol-test", True), ("deepseek-flash", True), ("deepseek-flash", False)]
+)
+def test_chat_completions_http_transport(evidence, tmp_path, model, thinking):
     tools, finding = evidence
     received = []
 
@@ -215,6 +218,11 @@ def test_chat_completions_http_transport(evidence, tmp_path):
             assert self.path == "/v1/chat/completions"
             body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
             received.append(body)
+            if model == "deepseek-flash":
+                assert body["thinking"] == {"type": "enabled" if thinking else "disabled"}
+                assert body["max_tokens"] == (16384 if thinking else 1800)
+            else:
+                assert "thinking" not in body
             if len(received) == 1:
                 assert {t["function"]["name"] for t in body["tools"]} == {
                     s["name"] for s in tools.schemas()
@@ -222,6 +230,7 @@ def test_chat_completions_http_transport(evidence, tmp_path):
                 msg = {
                     "role": "assistant",
                     "content": None,
+                    "reasoning_content": "protocol-test-reasoning",
                     "tool_calls": [
                         {
                             "id": "http-call",
@@ -236,6 +245,8 @@ def test_chat_completions_http_transport(evidence, tmp_path):
                     ],
                 }
             else:
+                if model == "deepseek-flash" and thinking:
+                    assert body["messages"][2]["reasoning_content"] == "protocol-test-reasoning"
                 msg = {
                     "role": "assistant",
                     "content": json.dumps(
@@ -264,16 +275,58 @@ def test_chat_completions_http_transport(evidence, tmp_path):
             finding,
             tmp_path,
             base_url=f"http://127.0.0.1:{server.server_port}/v1",
-            model="protocol-test",
+            model=model,
             api_key="dummy",
+            thinking=thinking,
         )
         assert len(received) == 2
         assert result["review"]["verdict"] == "needs_review"
         assert result["tool_calls"][0]["name"] == "get_sql"
+        assert result["thinking_enabled"] is (thinking and model == "deepseek-flash")
+        assert review_one(
+            tools,
+            finding,
+            tmp_path,
+            base_url=f"http://127.0.0.1:{server.server_port}/v1",
+            model=model,
+            api_key="dummy",
+            thinking=thinking,
+        )["cache_hit"]
     finally:
         server.shutdown()
         server.server_close()
         thread.join()
+
+
+def test_thinking_choice_separates_model_cache(evidence, tmp_path):
+    tools, finding = evidence
+    received = []
+
+    def sender(messages, schemas, **options):
+        received.append(options["thinking"])
+        return {
+            "choices": [
+                {
+                    "message": {
+                        "content": json.dumps(
+                            {
+                                "verdict": "needs_review",
+                                "explanation": "cache contract",
+                                "required_conditions": [],
+                                "evidence_ids": [],
+                                "suggested_test": "check",
+                            }
+                        )
+                    }
+                }
+            ]
+        }
+
+    kwargs = {"sender": sender, "base_url": "https://model.example/v1", "model": "deepseek-flash"}
+    assert not review_one(tools, finding, tmp_path, thinking=True, **kwargs)["cache_hit"]
+    assert not review_one(tools, finding, tmp_path, thinking=False, **kwargs)["cache_hit"]
+    assert review_one(tools, finding, tmp_path, thinking=True, **kwargs)["cache_hit"]
+    assert received == [True, False]
 
 
 @pytest.fixture(autouse=True)

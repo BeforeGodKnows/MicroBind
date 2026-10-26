@@ -1,0 +1,109 @@
+{
+  "project": "MicroBind",
+  "version": "0.3.4",
+  "checked_on": "2026-10-26",
+  "record_type": "linux_deployment_validation",
+  "tested_source_commit": "dea9152b97a25830c39840a2d1015670cd9fac30",
+  "environment": {
+    "host_os": "Ubuntu 18.04.3",
+    "docker": "20.10.21",
+    "compose": "2.2.2",
+    "container_python": "3.12.15",
+    "container_java": "17.0.15",
+    "container_maven": "3.9.9",
+    "host_dependencies_unchanged": true,
+    "instance_compatibility_overrides_used": true
+  },
+  "unit_tests": {
+    "total": 48,
+    "passed": 48,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 23.266
+  },
+  "python_style": {
+    "lint_passed": true,
+    "format_passed": true
+  },
+  "browser": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "seconds": 81.352,
+    "real_api_queue_and_workers": true,
+    "source_upload_and_download": true,
+    "java_runtime": true
+  },
+  "upstream_samples": {
+    "sample_groups_passed": 3,
+    "original_files_verified": 22
+  },
+  "runtime_lab": {
+    "sample_type": "constructed_lab_not_real_project_benchmark",
+    "scenarios": 18,
+    "unauthorized_effects_before": 8,
+    "unauthorized_effects_after": 0,
+    "legitimate_requests_passed": 18,
+    "boundary_checks_passed": 4,
+    "patch_count": 8,
+    "repeated_with_enforced_cpu_quotas": true
+  },
+  "deployment": {
+    "services_running": 4,
+    "memory_and_pids_limits_verified": true,
+    "cfs_cpu_quotas_verified": true,
+    "acceptance_passed": true,
+    "source_manifest_files_verified": 164,
+    "tracked_source_unchanged": true
+  },
+  "limits": {
+    "real_model_not_executed": true,
+    "full_paper_benchmark_not_executed": true
+  },
+  "feature_update": {
+    "checked_on": "2026-10-26",
+    "source_base_commit": "dea9152b97a25830c39840a2d1015670cd9fac30",
+    "tested_source_archive_sha256": "cb0fa7ae74781e4ab380aa8c1b3cd41db2d37d6f8e1a187da9519ba2130698f2",
+    "tested_payload_files": 165,
+    "publication_metadata_updated_after_validation": true,
+    "unit_tests": {
+      "tests": 61,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "seconds": 36.083
+    },
+    "ruff_passed": true,
+    "browser": {
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "seconds": 113.002,
+      "repository_test_cases": 6,
+      "instance_anonymous_reload_checks": 1,
+      "thinking_switch_request_intercepted": true
+    },
+    "runtime_lab": {
+      "unauthorized_effects_before": 8,
+      "unauthorized_effects_after": 0,
+      "legitimate_requests_passed": 18,
+      "boundary_checks_passed": 4
+    },
+    "model_protocol": {
+      "default_thinking_enabled": true,
+      "both_modes_and_queue_tested_via_local_http_stub": true,
+      "tool_reasoning_preserved": true,
+      "cache_separated_by_mode": true,
+      "real_model_not_executed": true
+    },
+    "access": {
+      "public_default_requires_token": true,
+      "instance_anonymous_mode_verified": true
+    },
+    "host_dependencies_unchanged": true,
+    "container_limits_verified": true
+  }
+}
