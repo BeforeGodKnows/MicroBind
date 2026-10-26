@@ -1,0 +1,36 @@
+# Copy this file to YOUR SOURCE ROOT as project.yml, then replace the sample paths.
+# Paths are relative to project.yml, not to the MicroBind installation directory.
+name: my-order-system
+services:
+  - name: orders              # Must equal the remote caller's @FeignClient(name=...).
+    path: order-service/src   # Replace with a real directory containing Java/resources.
+    exposed: true             # Reachable business entry; not Docker port publication.
+  - name: data
+    path: data-service/src
+    exposed: false
+trusted_identity:
+  com.example.security.CurrentUser.userId: user
+  com.example.security.CurrentUser.tenantId: tenant
+  com.example.security.CurrentUser.role: role
+policies:
+  orders:                     # Actual SQL table name.
+    single: {owner: owner_id} # Actual ownership column.
+    collection: {tenant: tenant_id}
+  users:
+    read: {role: ADMIN}
+    write: {role: ADMIN}
+  products:
+    read: {public: true}       # Only if this read really is public.
+repair: {}                    # Keep empty until existing guards are identified.
+# Optional after confirming names, signatures, and invocation location:
+# repair:
+#   owner_guard: auth.requireOwner
+#   role_guard: auth.requireAdmin
+#   current_user: CurrentUser.userId()
+analysis:
+  max_depth: 30
+  max_states: 128
+# Optional evidence metadata; it does not implement or verify gateway authentication.
+trust_boundary:
+  gateway: gateway-service
+  identity_filter: order-service/src/main/java/com/example/IdentityFilter.java

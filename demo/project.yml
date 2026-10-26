@@ -1,0 +1,41 @@
+name: microbind-orders-lab
+services:
+  - name: common
+    path: common/src
+    exposed: false
+  - name: gateway
+    path: gateway/src
+    exposed: false
+  - name: orders
+    path: orders/src
+    exposed: true
+  - name: data
+    path: data/src
+    exposed: false
+# Deployment facts: gateway authenticates tokens and rewrites identity headers;
+# orders/data require the internal key. Checked by the HTTP integration suite.
+trust_boundary:
+  entry_prefix: /api
+  gateway: gateway
+  identity_filter: orders/src/main/java/demo/orders/IdentityFilter.java
+  internal_filter: data/src/main/java/demo/data/InternalFilter.java
+trusted_identity:
+  demo.orders.AuthContext.userId: user
+  demo.orders.AuthContext.tenantId: tenant
+  demo.orders.AuthContext.role: role
+policies:
+  orders:
+    single: {owner: owner_id}
+    collection: {tenant: tenant_id}
+  users:
+    write: {role: ADMIN}
+    read: {role: ADMIN}
+  products:
+    read: {public: true}
+repair:
+  owner_guard: auth.requireOwner
+  role_guard: auth.requireAdmin
+  current_user: AuthContext.userId()
+analysis:
+  max_depth: 30
+  max_states: 128

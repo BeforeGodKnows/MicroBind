@@ -1,0 +1,29 @@
+{
+  "repository": "https://github.com/columbia/neo",
+  "commit": "65ec4e35a1db67159a9d89a59e3e28d30f665690",
+  "source_modified": false,
+  "scope": "selected_original_source_files",
+  "files": [
+    {
+      "path": "upstream/examples/role-switch-demo/user-profile/src/ProfileController.java",
+      "upstream_path": "examples/role-switch-demo/user-profile/src/ProfileController.java",
+      "sha256": "6a8eccce6b1e0fc3bac0ce314837c1d527d5b39fcf7b2fd107c49091696a0077"
+    },
+    {
+      "path": "upstream/examples/role-switch-demo/user-mgmt/app/main.py",
+      "upstream_path": "examples/role-switch-demo/user-mgmt/app/main.py",
+      "sha256": "bf662257ee0a0be7efaa2974417cda38e626c3ba8cdbc2d2275bb607b2b5a18e"
+    },
+    {
+      "path": "upstream/examples/role-switch-demo/neo.services.yaml",
+      "upstream_path": "examples/role-switch-demo/neo.services.yaml",
+      "sha256": "4baf10152cf56afa23f355a822d67dabbe664132286ef0d7ee17efa1e63464ba"
+    },
+    {
+      "path": "upstream/LICENSE",
+      "upstream_path": "LICENSE",
+      "sha256": "d474358a4b83ba0ac12a8586e065210744c92b77c516c3fe4025324447cbd64d"
+    }
+  ],
+  "relation": "NEO author repository sample"
+}

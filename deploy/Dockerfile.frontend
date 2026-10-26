@@ -1,0 +1,15 @@
+ARG NODE_IMAGE=node:24-bookworm-slim
+ARG NGINX_IMAGE=nginxinc/nginx-unprivileged:1.28-alpine
+FROM ${NODE_IMAGE} AS build
+ARG NPM_REGISTRY=https://registry.npmjs.org
+WORKDIR /web
+COPY frontend/package.json frontend/package-lock.json ./
+# Change only locked npm tarball origins; retain integrity hashes.
+RUN node -e 'const fs=require("fs"); const p="package-lock.json"; fs.writeFileSync(p,fs.readFileSync(p,"utf8").replaceAll("https://registry.npmjs.org",process.argv[1].replace(/\/$/,"")))' "${NPM_REGISTRY}" \
+    && npm ci --registry=${NPM_REGISTRY} --no-audit --no-fund
+COPY frontend/ ./
+RUN npm run build
+FROM ${NGINX_IMAGE}
+COPY deploy/nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /web/dist /usr/share/nginx/html
+EXPOSE 8080

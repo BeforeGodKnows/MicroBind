@@ -1,0 +1,17 @@
+name: pcfinder-listed-litemall-source-subset
+services:
+  - name: litemall
+    path: upstream
+    exposed: true
+policies:
+  litemall_address:
+    single: {owner: user_id}
+    collection: {owner: user_id}
+  litemall_brand:
+    read: {public: true}
+trusted_identity: {}
+repair: {}
+analysis: {max_depth: 30, max_states: 128}
+# Brand read is public in the selected original controller. Address reads/writes
+# require ownership. @LoginUser argument resolution is not modeled in v0.3.
+# Do not relabel arbitrary request parameters as trusted to obtain a pass.

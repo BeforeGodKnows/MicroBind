@@ -1,0 +1,62 @@
+# Optional long-running three-container lab, separate from the analysis queue.
+x-lab: &lab
+  profiles: [lab]
+  restart: unless-stopped
+  init: true
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  networks: [lab]
+  tmpfs: ["/tmp:size=128m,mode=1777"]
+  mem_limit: 512m
+  cpus: 0.5
+  pids_limit: 128
+  logging:
+    driver: json-file
+    options: {max-size: "5m", max-file: "2"}
+x-lab-args: &lab-args
+  MAVEN_IMAGE: ${MAVEN_IMAGE:-maven:3.9.9-eclipse-temurin-17}
+  JAVA_IMAGE: ${JAVA_IMAGE:-eclipse-temurin:17-jre}
+  MAVEN_REPOSITORY: ${MAVEN_REPOSITORY:-https://repo.maven.apache.org/maven2}
+services:
+  lab-data:
+    <<: *lab
+    image: ${LAB_DATA_IMAGE:-microbind-lab-data:0.3.2}
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.lab
+      args:
+        <<: *lab-args
+        SERVICE: data
+    environment:
+      LAB_INTERNAL_KEY: ${LAB_INTERNAL_KEY:?Run scripts/init.sh first}
+  lab-orders:
+    <<: *lab
+    image: ${LAB_ORDERS_IMAGE:-microbind-lab-orders:0.3.2}
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.lab
+      args:
+        <<: *lab-args
+        SERVICE: orders
+    environment:
+      LAB_INTERNAL_KEY: ${LAB_INTERNAL_KEY:?Run scripts/init.sh first}
+      DATA_URL: http://lab-data:8082
+    depends_on: [lab-data]
+  lab-gateway:
+    <<: *lab
+    image: ${LAB_GATEWAY_IMAGE:-microbind-lab-gateway:0.3.2}
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.lab
+      args:
+        <<: *lab-args
+        SERVICE: gateway
+    environment:
+      LAB_INTERNAL_KEY: ${LAB_INTERNAL_KEY:?Run scripts/init.sh first}
+      ORDERS_URL: http://lab-orders:8081
+    ports: ["127.0.0.1:${LAB_PORT:-18081}:8080"]
+    depends_on: [lab-orders]
+networks:
+  lab:
+    internal: true

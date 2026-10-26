@@ -1,0 +1,19 @@
+{
+  "repository": "https://github.com/columbia/neo",
+  "commit": "65ec4e35a1db67159a9d89a59e3e28d30f665690",
+  "source_modified": false,
+  "scope": "selected_original_source_files",
+  "files": [
+    {
+      "path": "upstream/codebases/java/src/main/java/com/example/test/TestHTTPConnector.java",
+      "upstream_path": "codebases/java/src/main/java/com/example/test/TestHTTPConnector.java",
+      "sha256": "1dcd9a4cf47e9709254ca2fc20dd945faf029d66e6ad41f9b97c7e4d92e8df00"
+    },
+    {
+      "path": "upstream/LICENSE",
+      "upstream_path": "LICENSE",
+      "sha256": "d474358a4b83ba0ac12a8586e065210744c92b77c516c3fe4025324447cbd64d"
+    }
+  ],
+  "relation": "NEO author repository sample"
+}

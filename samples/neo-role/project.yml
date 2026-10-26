@@ -1,0 +1,11 @@
+name: neo-original-role-switch
+services:
+  - name: user-profile
+    path: upstream/examples/role-switch-demo/user-profile
+    exposed: true
+  - name: user-mgmt
+    path: upstream/examples/role-switch-demo/user-mgmt
+    language: python
+    exposed: false
+policies: {}
+# Deliberately retain the unsupported Python/RestTemplate boundary in the test.

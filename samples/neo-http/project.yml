@@ -1,0 +1,18 @@
+name: neo-original-http-connector
+services:
+  - name: caller
+    path: upstream/codebases/java/src
+    exposed: true
+    include_classes: [com.example.test.AccountServiceClient, com.example.test.PaymentServiceClient, com.example.test.BusinessService, com.example.test.UserController, com.example.test.OrderController, com.example.test.UsersController]
+  - name: account-service
+    path: upstream/codebases/java/src
+    exposed: false
+    include_classes: [com.example.test.AccountController]
+  - name: payment-service
+    path: upstream/codebases/java/src
+    exposed: false
+    include_classes: [com.example.test.PaymentController]
+policies: {}
+# The original file groups several logical services in one compilation unit.
+# Class selection assigns them without rewriting the original Java file.
+# Connector test only: the upstream sample has no SQL authorization oracle.

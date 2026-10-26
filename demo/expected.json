@@ -1,0 +1,128 @@
+[
+  {
+    "method": "GET",
+    "route": "/missing/{id}",
+    "name": "missing",
+    "status": "suspected",
+    "reason": "missing_owner"
+  },
+  {
+    "method": "GET",
+    "route": "/safe/{id}",
+    "name": "safe",
+    "status": "covered",
+    "reason": "upstream_guard"
+  },
+  {
+    "method": "GET",
+    "route": "/post-read/{id}",
+    "name": "postRead",
+    "status": "covered",
+    "reason": "check_before_release"
+  },
+  {
+    "method": "POST",
+    "route": "/mismatch/{id}",
+    "name": "mismatch",
+    "status": "suspected",
+    "reason": "object_mismatch"
+  },
+  {
+    "method": "POST",
+    "route": "/aligned/{id}",
+    "name": "aligned",
+    "status": "covered",
+    "reason": "same_object"
+  },
+  {
+    "method": "GET",
+    "route": "/tenant/all",
+    "name": "tenantAll",
+    "status": "suspected",
+    "reason": "missing_tenant"
+  },
+  {
+    "method": "GET",
+    "route": "/tenant/scoped",
+    "name": "tenantSafe",
+    "status": "covered",
+    "reason": "sql_tenant"
+  },
+  {
+    "method": "GET",
+    "route": "/spoof/{id}",
+    "name": "spoof",
+    "status": "suspected",
+    "reason": "untrusted_subject"
+  },
+  {
+    "method": "GET",
+    "route": "/trusted/{id}",
+    "name": "trusted",
+    "status": "covered",
+    "reason": "trusted_subject"
+  },
+  {
+    "method": "POST",
+    "route": "/admin/missing/{id}",
+    "name": "roleMissing",
+    "status": "suspected",
+    "reason": "missing_role"
+  },
+  {
+    "method": "POST",
+    "route": "/admin/safe/{id}",
+    "name": "roleSafe",
+    "status": "covered",
+    "reason": "enabled_method_security"
+  },
+  {
+    "method": "POST",
+    "route": "/ignored/{id}",
+    "name": "ignored",
+    "status": "suspected",
+    "reason": "ignored_boolean"
+  },
+  {
+    "method": "POST",
+    "route": "/enforced/{id}",
+    "name": "enforced",
+    "status": "covered",
+    "reason": "reject_branch"
+  },
+  {
+    "method": "POST",
+    "route": "/late/{id}",
+    "name": "late",
+    "status": "suspected",
+    "reason": "check_after_write"
+  },
+  {
+    "method": "POST",
+    "route": "/branch/{id}",
+    "name": "branch",
+    "status": "suspected",
+    "reason": "conditional_guard"
+  },
+  {
+    "method": "GET",
+    "route": "/sql-owner/{id}",
+    "name": "sqlOwner",
+    "status": "covered",
+    "reason": "sql_owner"
+  },
+  {
+    "method": "GET",
+    "route": "/catalog",
+    "name": "publicCatalog",
+    "status": "covered",
+    "reason": "public_policy"
+  },
+  {
+    "method": "GET",
+    "route": "/alias/{id}",
+    "name": "aliasSafe",
+    "status": "covered",
+    "reason": "assignment_identity"
+  }
+]

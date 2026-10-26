@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="demo.data.OrderMapper">
+    <select id="get" resultType="demo.common.Order">
+        SELECT id, owner_id, tenant_id, status, address FROM orders WHERE id = #{id}
+    </select>
+    <update id="cancel">
+        UPDATE orders SET status = 'CANCELLED' WHERE id = #{id}
+    </update>
+    <select id="all" resultType="demo.common.Order">
+        SELECT id, owner_id, tenant_id, status, address FROM orders
+    </select>
+    <select id="scoped" resultType="demo.common.Order">
+        SELECT id, owner_id, tenant_id, status, address FROM orders WHERE tenant_id = #{tenantId}
+    </select>
+    <select id="owned" resultType="demo.common.Order">
+        SELECT id, owner_id, tenant_id, status, address FROM orders WHERE id = #{id} AND owner_id = #{actorId}
+    </select>
+</mapper>

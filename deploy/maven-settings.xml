@@ -1,0 +1,3 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+  <mirrors><mirror><id>build-mirror</id><mirrorOf>*</mirrorOf><url>${env.MAVEN_REPOSITORY}</url></mirror></mirrors>
+</settings>

@@ -1,0 +1,12 @@
+server:
+  address: ${BIND_ADDRESS:127.0.0.1}
+  port: 8080
+spring:
+  application:
+    name: gateway
+  main:
+    banner-mode: 'off'
+lab:
+  internal-key: ${LAB_INTERNAL_KEY:local-demo-internal-key}
+  orders-url: ${ORDERS_URL:http://127.0.0.1:8081}
+  data-url: ${DATA_URL:http://127.0.0.1:8082}

@@ -1,0 +1,32 @@
+name: Frontend workflow
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: python -m pip install -r deploy/requirements.lock
+      - run: python -m pip install -e '.[server,mcp,test]'
+      - run: npm --prefix frontend ci
+      - run: npm --prefix frontend run build
+      - run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      - run: python tools/run_web_smoke.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-validation
+          path: |
+            out/validation/browser-tests.json
+            out/ui-inspection/*.png

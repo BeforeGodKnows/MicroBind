@@ -1,0 +1,23 @@
+server:
+  address: ${BIND_ADDRESS:127.0.0.1}
+  port: 8082
+spring:
+  application:
+    name: data
+  datasource:
+    url: jdbc:h2:mem:microbind;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+  sql:
+    init:
+      mode: always
+  main:
+    banner-mode: 'off'
+lab:
+  internal-key: ${LAB_INTERNAL_KEY:local-demo-internal-key}
+  orders-url: ${ORDERS_URL:http://127.0.0.1:8081}
+  data-url: ${DATA_URL:http://127.0.0.1:8082}
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true

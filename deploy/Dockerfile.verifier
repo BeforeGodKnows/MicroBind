@@ -1,0 +1,21 @@
+ARG MAVEN_IMAGE=maven:3.9.9-eclipse-temurin-17
+ARG BACKEND_IMAGE=microbind-api:0.3.2
+FROM ${MAVEN_IMAGE} AS java
+ARG MAVEN_REPOSITORY=https://repo.maven.apache.org/maven2
+ENV MAVEN_REPOSITORY=${MAVEN_REPOSITORY}
+WORKDIR /seed
+COPY demo /seed
+COPY deploy/maven-settings.xml /tmp/settings.xml
+RUN mvn -B -q -s /tmp/settings.xml clean package -DskipTests
+FROM ${BACKEND_IMAGE}
+USER root
+COPY --from=java /opt/java/openjdk /opt/java/openjdk
+COPY --from=java /usr/share/maven /usr/share/maven
+COPY --from=java /root/.m2 /opt/maven-cache
+COPY deploy/maven-offline.xml /app/deploy/maven-offline.xml
+COPY deploy/verify-entrypoint.sh /app/deploy/verify-entrypoint.sh
+RUN mkdir -p /cache/maven && chown -R 10001:10001 /cache
+ENV JAVA_HOME=/opt/java/openjdk PATH=/opt/java/openjdk/bin:/usr/share/maven/bin:${PATH} \
+    MICROBIND_MAVEN_SETTINGS=/app/deploy/maven-offline.xml MAVEN_OPTS="-Xmx384m -XX:ActiveProcessorCount=2"
+USER 10001:10001
+ENTRYPOINT ["sh", "/app/deploy/verify-entrypoint.sh"]

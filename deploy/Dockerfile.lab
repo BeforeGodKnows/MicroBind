@@ -1,0 +1,16 @@
+ARG MAVEN_IMAGE=maven:3.9.9-eclipse-temurin-17
+ARG JAVA_IMAGE=eclipse-temurin:17-jre
+FROM ${MAVEN_IMAGE} AS build
+ARG MAVEN_REPOSITORY=https://repo.maven.apache.org/maven2
+ENV MAVEN_REPOSITORY=${MAVEN_REPOSITORY}
+WORKDIR /source
+COPY demo /source
+COPY deploy/maven-settings.xml /tmp/settings.xml
+RUN mvn -B -q -s /tmp/settings.xml clean package -DskipTests
+FROM ${JAVA_IMAGE}
+ARG SERVICE
+WORKDIR /app
+COPY --from=build /source/${SERVICE}/target/${SERVICE}-0.1.0.jar /app/app.jar
+ENV BIND_ADDRESS=0.0.0.0
+USER 10001:10001
+ENTRYPOINT ["java", "-Xmx192m", "-XX:ActiveProcessorCount=2", "-jar", "/app/app.jar"]

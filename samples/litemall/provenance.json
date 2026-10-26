@@ -1,0 +1,89 @@
+{
+  "repository": "https://github.com/linlinjava/litemall",
+  "commit": "a1ef964a718b7277925b19ea26afe78ea3a1d325",
+  "source_modified": false,
+  "scope": "selected_original_source_files",
+  "files": [
+    {
+      "path": "upstream/litemall-wx-api/src/main/java/org/linlinjava/litemall/wx/web/WxAddressController.java",
+      "upstream_path": "litemall-wx-api/src/main/java/org/linlinjava/litemall/wx/web/WxAddressController.java",
+      "sha256": "417d7b8480b4029e02a3a31993407f15a602fbc36d342e498546319f6170f1a0"
+    },
+    {
+      "path": "upstream/litemall-wx-api/src/main/java/org/linlinjava/litemall/wx/web/WxBrandController.java",
+      "upstream_path": "litemall-wx-api/src/main/java/org/linlinjava/litemall/wx/web/WxBrandController.java",
+      "sha256": "8226018f8bd724cae04ef46ec6b2fdd1c374e5b0e2798e47ed61fc0f2d039b7e"
+    },
+    {
+      "path": "upstream/litemall-core/src/main/java/org/linlinjava/litemall/core/util/ResponseUtil.java",
+      "upstream_path": "litemall-core/src/main/java/org/linlinjava/litemall/core/util/ResponseUtil.java",
+      "sha256": "92eb04af8b1a2b6cf45b44b944528b33969ee79a638a1c93b49929429f3ed6e4"
+    },
+    {
+      "path": "upstream/litemall-wx-api/src/main/java/org/linlinjava/litemall/wx/annotation/LoginUser.java",
+      "upstream_path": "litemall-wx-api/src/main/java/org/linlinjava/litemall/wx/annotation/LoginUser.java",
+      "sha256": "39317bd1833a5330146fc16adb5d8ca2693b1823c6bcf177dd413d7453dc4258"
+    },
+    {
+      "path": "upstream/litemall-wx-api/src/main/java/org/linlinjava/litemall/wx/annotation/support/LoginUserHandlerMethodArgumentResolver.java",
+      "upstream_path": "litemall-wx-api/src/main/java/org/linlinjava/litemall/wx/annotation/support/LoginUserHandlerMethodArgumentResolver.java",
+      "sha256": "2ecb30cd0d4e3a8cf35912c1fc88759fed34a41d1515f4e2978565e8ba8ca1d1"
+    },
+    {
+      "path": "upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/service/LitemallAddressService.java",
+      "upstream_path": "litemall-db/src/main/java/org/linlinjava/litemall/db/service/LitemallAddressService.java",
+      "sha256": "88a009af4e8ee7b34756a8232a05532170acb7d0f2b4e4c4ed08302aff0f3099"
+    },
+    {
+      "path": "upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/dao/LitemallAddressMapper.java",
+      "upstream_path": "litemall-db/src/main/java/org/linlinjava/litemall/db/dao/LitemallAddressMapper.java",
+      "sha256": "0b494e7fbf71cf8ea44be11192c69e77d8d7311769700bf6cb8c83e889b71dcb"
+    },
+    {
+      "path": "upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/domain/LitemallAddress.java",
+      "upstream_path": "litemall-db/src/main/java/org/linlinjava/litemall/db/domain/LitemallAddress.java",
+      "sha256": "c3893789b1317b4db0b2ebcd88981452a2d8bc84bb33dfb5708ecf21693367ec"
+    },
+    {
+      "path": "upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/domain/LitemallAddressExample.java",
+      "upstream_path": "litemall-db/src/main/java/org/linlinjava/litemall/db/domain/LitemallAddressExample.java",
+      "sha256": "5f62004c7e9be8f7dfad9dc3ebbbf8e5f26626f36ed6b8240ccf8bf6c48c080d"
+    },
+    {
+      "path": "upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/service/LitemallBrandService.java",
+      "upstream_path": "litemall-db/src/main/java/org/linlinjava/litemall/db/service/LitemallBrandService.java",
+      "sha256": "e147bb9760e279634600c21d5aa362b5fa38c05295ed76fc6b6fa34f50a049fc"
+    },
+    {
+      "path": "upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/dao/LitemallBrandMapper.java",
+      "upstream_path": "litemall-db/src/main/java/org/linlinjava/litemall/db/dao/LitemallBrandMapper.java",
+      "sha256": "61d16be8bcbeb2956e85071fc18cb17410ce71924f819e78140dba8f96f9b64d"
+    },
+    {
+      "path": "upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/domain/LitemallBrand.java",
+      "upstream_path": "litemall-db/src/main/java/org/linlinjava/litemall/db/domain/LitemallBrand.java",
+      "sha256": "576904a841612b91e642af7f439c52e2f80bcc06e5fbc70eb11b5961afd09582"
+    },
+    {
+      "path": "upstream/litemall-db/src/main/java/org/linlinjava/litemall/db/domain/LitemallBrandExample.java",
+      "upstream_path": "litemall-db/src/main/java/org/linlinjava/litemall/db/domain/LitemallBrandExample.java",
+      "sha256": "19a53f9c61178672c39a587bffd5dd3856f23cbcb9a50e7cc9117fdcad481c74"
+    },
+    {
+      "path": "upstream/litemall-db/src/main/resources/org/linlinjava/litemall/db/dao/LitemallAddressMapper.xml",
+      "upstream_path": "litemall-db/src/main/resources/org/linlinjava/litemall/db/dao/LitemallAddressMapper.xml",
+      "sha256": "825be7070bbbf7d99ea7e3ac3c8838a73982b026a117975f56dcb741bd589cdf"
+    },
+    {
+      "path": "upstream/litemall-db/src/main/resources/org/linlinjava/litemall/db/dao/LitemallBrandMapper.xml",
+      "upstream_path": "litemall-db/src/main/resources/org/linlinjava/litemall/db/dao/LitemallBrandMapper.xml",
+      "sha256": "c1a1cfa32891fcb3e8a3e704ab96efe687033a5ec183ce35900ab74659c32a42"
+    },
+    {
+      "path": "upstream/LICENSE",
+      "upstream_path": "LICENSE",
+      "sha256": "20f75e61fd07d21f9a655937213ce46814b0e40f6ddb93a5f69938736c71dfa0"
+    }
+  ],
+  "relation": "Project listed by PCFinder dataset/dataset.txt; snapshot chosen by MicroBind, not paper-pinned revision or permission-check ground truth"
+}

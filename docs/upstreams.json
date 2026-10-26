@@ -1,0 +1,102 @@
+[
+  {
+    "name": "neo",
+    "url": "https://github.com/columbia/neo",
+    "commit": "65ec4e35a1db67159a9d89a59e3e28d30f665690",
+    "inspected_on": "2026-10-23",
+    "sparse_paths": [
+      "src",
+      "queries",
+      "examples",
+      "tests"
+    ],
+    "read_files": [
+      "src/interlang/graph.py",
+      "src/interlang/channels.py",
+      "src/interlang/stitch.py",
+      "src/flows/validate_flows.py",
+      "examples/run_demo.py"
+    ],
+    "implementation_copied": false
+  },
+  {
+    "name": "MScan",
+    "url": "https://github.com/LFYSec/MScan",
+    "commit": "75e411368964e895eba0b0d4f6359d228d47da7b",
+    "inspected_on": "2026-10-23",
+    "sparse_paths": [
+      "src/main/java",
+      "gateway_entry_scan"
+    ],
+    "read_files": [
+      "src/main/java/fdu/secsys/microservice/plugin/OpenFeignPlugin.java"
+    ],
+    "implementation_copied": false
+  },
+  {
+    "name": "PCFinder",
+    "url": "https://github.com/seclab-fudan/PCFinder",
+    "commit": "41205551a8110935b80e2c0b010ac0c11f41d579",
+    "inspected_on": "2026-10-23",
+    "sparse_paths": [
+      "python",
+      "codeql"
+    ],
+    "read_files": [
+      "python/pcfinder.py"
+    ],
+    "implementation_copied": false
+  },
+  {
+    "name": "iris",
+    "url": "https://github.com/iris-sast/iris",
+    "commit": "3a12f45750f58135bcc58c7fdf4c20786b600e31",
+    "inspected_on": "2026-10-23",
+    "sparse_paths": [
+      "src"
+    ],
+    "read_files": [
+      "src/modules/contextual_analysis_pipeline.py"
+    ],
+    "implementation_copied": false
+  },
+  {
+    "name": "llmxcpg",
+    "url": "https://github.com/qcri/llmxcpg",
+    "commit": "fd7af0df8d2221ec196b85bc460da5cb40f6866c",
+    "inspected_on": "2026-10-23",
+    "sparse_paths": [
+      "inference",
+      "queries",
+      "prompts"
+    ],
+    "read_files": [
+      "queries/construct_slice.py"
+    ],
+    "implementation_copied": false
+  },
+  {
+    "name": "BolaRay",
+    "url": "https://github.com/BolaRay-d/BolaRay",
+    "commit": "6b4e7150e1504bd7a28795c577c01997ce53edeb",
+    "inspected_on": "2026-10-23",
+    "sparse_paths": [
+      "python-joern/joern/phpjoernsteps/dbsteps"
+    ],
+    "read_files": [
+      "python-joern/joern/phpjoernsteps/dbsteps/WhereInfo.groovy"
+    ],
+    "implementation_copied": false
+  },
+  {
+    "name": "BACAgent",
+    "url": "https://github.com/LFYSec/BACAgent",
+    "commit": "1e872eb57e9f05422e4b4c096c97f446706de30d",
+    "inspected_on": "2026-10-23",
+    "sparse_paths": [],
+    "read_files": [
+      "README.md"
+    ],
+    "implementation_copied": false
+  }
+]
